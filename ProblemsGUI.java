@@ -99,12 +99,12 @@ public class ProblemsGUI extends JFrame
 			    	
                     dispose();
     			}
-                /*if (e.getActionCommand().equals("Complaints")) {
+                if (e.getActionCommand().equals("Complaints")) {
                     cgui = new ComplaintGUI();
-			    	cgui.pack();
+			    	cgui.createAndShowGUI();
                     
                     dispose();
-                }*/
+                }
                 if (e.getActionCommand().equals("Products")) {
                     pgui = new ProductsGUI();
 			    	pgui.pack();

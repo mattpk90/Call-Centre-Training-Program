@@ -21,6 +21,7 @@ public class ComplaintGUI
 	
 	static NavigationListener navigationListener;	
 	static JFrame frame;
+	static JMenuBar menuBar;
 	
 	final static boolean shouldFill = true;
     final static boolean shouldWeightX = true;
@@ -75,8 +76,9 @@ public class ComplaintGUI
 	    	    
 	    
 		//menu bar
-		JMenuBar menuBar = new JMenuBar();
+		menuBar = new JMenuBar();
 		pane.add(menuBar);
+		//pane.setJMenuBar(menuBar);
     	menuBar.add(fileMenu);
     	menuBar.add(pageNav);
     	menuBar.add(fileHelpMenu);
@@ -101,34 +103,74 @@ public class ComplaintGUI
     	fileHelpMenu.add(helpFAQ);
     	fileHelpMenu.add(helpGuide);
     	fileHelpMenu.add(helpSearch); 
-	
-    
-	 	//buttons
-    	JButton homeComplButton = new JButton("Home");
-	    c.ipady = 20;
+    	
+    	
+    	//add menu
+    	c.ipady = 15;
 	    c.weightx = 0.5;
     	c.gridx = 0;
 		c.gridy = 0;
+		c.gridwidth = 0;
+		c.gridheight = 1;
+    	pane.add(menuBar, c);
+    	c.insets = new Insets(0,0,0,0);
+    	//menuBar.addActionListener(navigationListener); 
+    	
+	 	//add buttons
+    	JButton homeComplButton = new JButton("Home");
+	    c.ipady = 20;
+	    //c.weightx = 1;
+    	c.gridx = 1;
+		c.gridy = 1;
 		c.gridwidth = 1;
 		c.gridheight = 1;
 		//c.fill = GridBagConstraints.HORIZONTAL;
+		c.insets = new Insets(0,0,0,0);
     	pane.add(homeComplButton, c);   
     	homeComplButton.addActionListener(navigationListener); 	
     	
-    	
-    	JButton newComplButton = new JButton("New Complaint");
+
+		JLabel custIdLbl = new JLabel("Customer ID:");
 		c.ipady = 20;
-		c.weightx = 0.25;
+		c.weightx = 0.5;
 		c.gridx = 1;
-		c.gridy = 0;
+		c.gridy = 2;
 		c.gridwidth = 1;
 		c.gridheight = 1;
-		c.fill = GridBagConstraints.HORIZONTAL;
-    	pane.add(newComplButton, c);
-		newComplButton.addActionListener(navigationListener);
+		//c.fill = GridBagConstraints.HORIZONTAL;
+		c.insets = new Insets(0,0,0,0);
+    	pane.add(custIdLbl, c);
+		//newComplButton.addActionListener(navigationListener);
+		
+		JTextField custIdTxt = new JTextField("");
+		c.ipady = 20;
+		c.weightx = 0.5;
+		c.gridx = 2;
+		c.gridy = 2;
+		c.gridwidth = 1;
+		c.gridheight = 1;
+		c.insets = new Insets(0,-205,0,287);
+		//c.fill = GridBagConstraints.HORIZONTAL;
+    	pane.add(custIdTxt, c);
+		//newComplButton.addActionListener(navigationListener);
+		
+		
+		JButton custIdGoButton = new JButton("Fetch Complaint History");
+		//c.ipady = 20;
+		c.weightx = 0.2;
+		c.gridx = 3;
+		c.gridy = 2;
+		c.gridwidth = 1;
+		c.gridheight = 1;
+		//c.fill = GridBagConstraints.HORIZONTAL;
+		c.insets = new Insets(0,-205,0,287);
+    	pane.add(custIdGoButton, c);
+		//newComplButton.addActionListener(navigationListener);
+		
+		
 	    
-	    
-	    complaintTextArea = new JTextArea("Add comments here.");
+	    //add text area
+	    complaintTextArea = new JTextArea("Add comments here.", 10, 30);
 		complaintTextArea.setFont(new Font("Serif", Font.ITALIC, 16));
 		complaintTextArea.setLineWrap(true);
 		complaintTextArea.setWrapStyleWord(true);
@@ -136,18 +178,35 @@ public class ComplaintGUI
 		complaintScrollPane = new JScrollPane(complaintTextArea);
 		complaintScrollPane.setVerticalScrollBarPolicy(
         JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-		//complaintScrollPane.setPreferredSize(new Dimension(100, 100));
-		c.fill = GridBagConstraints.VERTICAL;
+		//complaintScrollPane.setPreferredSize(new Dimension(400, 200));
+		//c.fill = GridBagConstraints.VERTICAL;
 		c.fill = GridBagConstraints.HORIZONTAL;
-		c.weightx = 0.0;
-		c.ipady = 200;
+		c.weightx = 1.0;
+		//c.ipady = 200;
 		c.ipadx = 200;
 		c.gridx = 0;
-		c.gridy = 1;
-		c.gridwidth = 0;
+		c.gridy = 3;
+		c.gridwidth = 3;
 		c.gridheight = 0;
-		//c.anchor = GridBagConstraints.PAGE_END;
+		c.insets = new Insets(0,0,0,0);
 		pane.add(complaintScrollPane, c);
+		//textArea.getDocument().addDocumentListener(this);
+		
+		JButton newComplButton = new JButton("Add Complaint");
+		//c.ipady = 20;
+		//c.weightx = 1;
+		c.gridx = 3;
+		c.gridy = 4;
+		c.gridwidth = 1;
+		c.gridheight = 1;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.insets = new Insets(290,-600,0,500);
+    	pane.add(newComplButton, c);
+		newComplButton.addActionListener(navigationListener);
+		
+ 
+	
+
     }
     
     
@@ -156,9 +215,9 @@ public class ComplaintGUI
         frame = new JFrame("Complaints");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         	
-    	frame.setResizable(true);
+    	frame.setResizable(false);
 		frame.setLocationRelativeTo(null);
-		//frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);			
+		frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);			
  
         //Set up the content pane.
         addComponentsToPane(frame.getContentPane());
@@ -185,25 +244,25 @@ public class ComplaintGUI
                     pgui = new ProductsGUI();
 			    	pgui.pack();
 			    	
-                    //dispose();
+                    frame.dispose();
                 }
                 if (e.getActionCommand().equals("Joining")) {
                     jgui = new JoiningGUI();
 			    	jgui.pack();
 			    	
-                    //dispose();
+                    frame.dispose();
                 }
                 if (e.getActionCommand().equals("Common Problems")) {
                     pbgui = new ProblemsGUI();
 			    	pbgui.pack();
 
-                    //dispose();
+                    frame.dispose();
                 }
                 if (e.getActionCommand().equals("Customer Details")) {
                     cdgui = new CustDetailsGUI();
 			    	cdgui.pack();
 
-                    //dispose();
+                    frame.dispose();
                 }
     		}
     	}

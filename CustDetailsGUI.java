@@ -97,12 +97,12 @@ public class CustDetailsGUI extends JFrame
 			    	
                     dispose();
     			}
-                /*if (e.getActionCommand().equals("Complaints")) {
+                if (e.getActionCommand().equals("Complaints")) {
                     cgui = new ComplaintGUI();
-			    	cgui.pack();
+			    	cgui.createAndShowGUI();
                     
                     dispose();
-                }*/
+                }
                 if (e.getActionCommand().equals("Joining")) {
                     jgui = new JoiningGUI();
 			    	jgui.pack();

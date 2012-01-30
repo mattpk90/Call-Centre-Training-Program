@@ -50,10 +50,22 @@ CustDetailsGUI cdgui;
 
     public View()
     {
+    	// Get the default toolkit
+		Toolkit toolkit = Toolkit.getDefaultToolkit();
+
+		// Get the current screen size
+		Dimension scrnsize = toolkit.getScreenSize();
+		double width = (scrnsize.getWidth() / 2) - 150;
+		double height = (scrnsize.getHeight() / 2) - 150;
+		System.out.println(width);
+		System.out.println(height);
+
+    	
      this.setResizable(false);
-this.setLocationRelativeTo(null);
-this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-this.setVisible(true);
+     this.setLocation((int)width,(int)height);
+	 //this.setLocationRelativeTo(null);
+	 this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	 this.setVisible(true);
      this.setLayout(new GridLayout(5,5));
     
      //listener object
@@ -61,7 +73,7 @@ this.setVisible(true);
 
      //menu bar
      JMenuBar menuBar = new JMenuBar();
-this.setJMenuBar(menuBar);
+	this.setJMenuBar(menuBar);
      menuBar.add(fileMenu);
      menuBar.add(pageNav);
      menuBar.add(fileHelpMenu);
@@ -77,6 +89,8 @@ this.setJMenuBar(menuBar);
      pageNav.add(navCustDetails);
     
      //add listeners to menu items
+     fileClose.addActionListener(navigationListener);
+     
      navComplaints.addActionListener(navigationListener);
      navProducts.addActionListener(navigationListener);
      navJoining.addActionListener(navigationListener);
@@ -126,7 +140,7 @@ custDetailsButton.addActionListener(navigationListener);
      }
                 if (e.getActionCommand().equals("Products")) {
                     pgui = new ProductsGUI();
-					pgui.pack();
+					pgui.createAndShowGUI();
 
                     dispose();
                 }
@@ -144,9 +158,12 @@ custDetailsButton.addActionListener(navigationListener);
                 }
                 if (e.getActionCommand().equals("Customer Details")) {
                     cdgui = new CustDetailsGUI();
-					cdgui.pack();
+					cdgui.createAndShowGUI();
 
                     dispose();
+                }
+                if (e.getActionCommand().equals("Close")) {
+                    System.exit(0);
                 }
      }
      }

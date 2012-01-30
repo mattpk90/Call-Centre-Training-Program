@@ -9,12 +9,16 @@
 import javax.swing.*;
 import java.io.*;
 
-public class Call_Centre_Training
+public class Call_Centre_Training 
 {
-    public static void main(String[] args)
+    public static void main(String[] args) throws Exception
     {
     	View v = new View();	
 		v.pack();
 		v.setSize(300,300);
+		
+		CallLogView c = new CallLogView();
+		c.pack();
+		c.setSize(100,100);
     }
 }

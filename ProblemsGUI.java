@@ -99,15 +99,15 @@ public class ProblemsGUI extends JFrame
 			    	
                     dispose();
     			}
-                if (e.getActionCommand().equals("Complaints")) {
+                /*if (e.getActionCommand().equals("Complaints")) {
                     cgui = new ComplaintGUI();
-			    	cgui.createAndShowGUI();
+			    	cgui.pack();
                     
                     dispose();
-                }
+                }*/
                 if (e.getActionCommand().equals("Products")) {
                     pgui = new ProductsGUI();
-			    	pgui.pack();
+			    	pgui.createAndShowGUI();
 
                     dispose();
                 }
@@ -119,7 +119,7 @@ public class ProblemsGUI extends JFrame
                 }
                 if (e.getActionCommand().equals("Customer Details")) {
                     cdgui = new CustDetailsGUI();
-			    	cdgui.pack();
+			    	cdgui.createAndShowGUI();
 
                     dispose();
                 }

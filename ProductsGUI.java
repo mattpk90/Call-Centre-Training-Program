@@ -9,31 +9,59 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.sql.SQLException;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.sql.PreparedStatement;
+import java.sql.Blob;
+import java.io.IOException;
+import java.util.Date;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 public class ProductsGUI
 {
 	static JFrame frame;
 	static JMenuBar menuBar;
+	static JButton fetchCustHistButton;
 	
 	final static boolean shouldFill = true;
     final static boolean shouldWeightX = true;
     final static boolean RIGHT_TO_LEFT = false;
     
-    static NavigationListener navigationListener;   
+    static JTextArea readOnlyTextArea, discussTextArea;
+    static JTextField custIdTxt, fNameTxt, sNameTxt, houseNumTxt, streetNameTxt, cityTxt, countyTxt, postCodeTxt, phoneNumTxt, emailTxt;
+    
+    static NavigationListener navigationListener;
+    static ComplaintFocusListener complaintFocusListener;
+    static FetchCustListener fetchCustListener;  
+    static AddDiscussionListener addDiscussionListener; 
+    static ProductDescListener productDescListener;
     	
     
-    static JTextField custIdTxt;
+    
 	
 	View v;
 	ComplaintGUI cgui;
 	CustDetailsGUI cdgui;
 	JoiningGUI jgui;
 	ProblemsGUI pbgui;
+	ProductDescGUI p;
+
 
 	
 	public ProductsGUI()
     { 		  	   	
     	navigationListener = new NavigationListener();
+    	complaintFocusListener = new ComplaintFocusListener();
+    	fetchCustListener = new FetchCustListener(); 
+    	addDiscussionListener = new AddDiscussionListener();
+    	productDescListener = new ProductDescListener();
     }
     
     public static void addComponentsToPane(Container pane)
@@ -45,7 +73,7 @@ public class ProductsGUI
  
 		
 		//scroll pane
-		JScrollPane complaintScrollPane;
+		JScrollPane discussScrollPane;
 		JScrollPane readOnlyScrollPane;
 		
 		//menus
@@ -110,8 +138,8 @@ public class ProductsGUI
     	//add menu
     	c.ipady = 15;
 	    c.weightx = 0.5;
-    	c.gridx = 0;
-		c.gridy = 0;
+    	c.gridy = 0;
+		c.gridx = 0;
 		c.gridwidth = 0;
 		c.gridheight = 1;
     	pane.add(menuBar, c);
@@ -122,12 +150,12 @@ public class ProductsGUI
     	JButton homeComplButton = new JButton("Home");
 	    c.ipady = 20;
 	    c.weightx = 0.0;
-    	c.gridx = 0;
-		c.gridy = 1;
-		c.gridwidth = 3;
+    	c.gridy = 1;
+		c.gridx = 0;
+		c.gridwidth = 6;
 		c.gridheight = 1;
 		//c.fill = GridBagConstraints.HORIZONTAL;
-		//c.insets = new Insets(0,0,0,0);
+		c.insets = new Insets(0,0,10,0);
     	pane.add(homeComplButton, c);   
     	homeComplButton.addActionListener(navigationListener); 	
     	
@@ -135,184 +163,184 @@ public class ProductsGUI
     	JLabel custIdLbl = new JLabel("Customer ID:");
 		c.ipady = 20;
 		c.weightx = 0.1;
-		c.gridx = 0;
 		c.gridy = 2;
+		c.gridx = 0;
 		c.gridwidth = 1;
 		c.gridheight = 1;
 		//c.fill = GridBagConstraints.HORIZONTAL;
-		c.insets = new Insets(0,0,0,0);
+		c.insets = new Insets(0,20,0,0);
     	pane.add(custIdLbl, c);
-		//newComplButton.addActionListener(navigationListener);
+
 		
 		custIdTxt = new JTextField(10);
 		custIdTxt.setFont(new Font("Serif", Font.ITALIC, 16));
 		c.ipady = 20;
 		c.weightx = 1.0;
-		c.gridx = 1;
 		c.gridy = 2;
+		c.gridx = 1;
 		c.gridwidth = 1;
 		c.gridheight = 1;
 		c.insets = new Insets(0,0,0,0);
 		//c.fill = GridBagConstraints.HORIZONTAL;
     	pane.add(custIdTxt, c);
-		//newComplButton.addActionListener(navigationListener);
+
 
 		
-		JButton fetchCustHistButton = new JButton("Fetch History");
+		fetchCustHistButton = new JButton("Fetch History");
 		//c.ipady = 20;
 		c.weightx = 0.0;
-		c.gridx = 2;
 		c.gridy = 2;
+		c.gridx = 2;
 		c.gridwidth = 1;
 		c.gridheight = 1;
 		//c.fill = GridBagConstraints.HORIZONTAL;
 		c.insets = new Insets(0,0,0,0);
     	pane.add(fetchCustHistButton, c);
-		//fetchCustHistButton.addActionListener(fetchCustHistListener);
+		fetchCustHistButton.addActionListener(fetchCustListener);
 		
 		
 		//horizontal separator
-		JSeparator separator = new JSeparator(JSeparator.HORIZONTAL);
-		separator.setPreferredSize(new Dimension(1,3));
+		JSeparator topSeparator = new JSeparator(JSeparator.HORIZONTAL);
+		topSeparator.setPreferredSize(new Dimension(1,6));
 		c.gridy = 3;
 		c.gridx = 0;
-		c.gridwidth = 3;
+		c.gridwidth = 0;
 	    c.fill = GridBagConstraints.HORIZONTAL;
-	    c.insets = new Insets(5,0,0,0);
+	    c.insets = new Insets(5,0,-15,0);
 		c.weightx = 1;
-	    pane.add(separator, c);
+	    pane.add(topSeparator, c);
 	    
 	    
 	    
 	    //First Name
 		JLabel fNameLbl = new JLabel("First Name:");
 		c.ipady = 20;
-		c.weightx = 0.1;
-		c.gridx = 0;
+		c.weightx = 1.0;
 		c.gridy = 4;
+		c.gridx = 0;
 		c.gridwidth = 1;
 		c.gridheight = 1;
-		c.insets = new Insets(0,0,0,0);
+		c.insets = new Insets(0,20,0,0);
     	pane.add(fNameLbl, c);
 		
-		JTextField fNameTxt = new JTextField("");
+		fNameTxt = new JTextField("");
 		c.ipady = 20;
-		c.weightx = 1.0;
+		c.weightx = 1.0;	
 		c.gridx = 1;
-		c.gridy = 4;
-		c.gridwidth = 2;
+		c.gridy = 4;		
+		c.gridwidth = 1;
 		c.gridheight = 1;
-		c.insets = new Insets(0,0,0,0);
+		c.insets = new Insets(0,-30,0,60);
     	pane.add(fNameTxt, c);
 		
 		
 		//Surname
 		JLabel sNameLbl = new JLabel("Surname:");
 		c.ipady = 20;
-		c.weightx = 0.1;
-		c.gridx = 0;
+		c.weightx = 0.1;	
 		c.gridy = 5;
+		c.gridx = 0;
 		c.gridwidth = 1;
 		c.gridheight = 1;
-		c.insets = new Insets(0,0,0,0);
+		c.insets = new Insets(0,20,0,30);
     	pane.add(sNameLbl, c);
 		
-		JTextField sNameTxt = new JTextField("");
+		sNameTxt = new JTextField("");
 		c.ipady = 20;
 		c.weightx = 1.0;
-		c.gridx = 1;
 		c.gridy = 5;
-		c.gridwidth = 2;
+		c.gridx = 1;
+		c.gridwidth = 1;
 		c.gridheight = 1;
-		c.insets = new Insets(0,0,0,0);
+		c.insets = new Insets(0,-30,0,60);
     	pane.add(sNameTxt, c);
 		
 		
 		//House Number
 		JLabel houseNumLbl = new JLabel("House Number:");
 		c.ipady = 20;
-		c.weightx = 0.1;
-		c.gridx = 0;
-		c.gridy = 6;
+		c.weightx = 1.0;
+		c.gridy = 4;
+		c.gridx = 2;		
 		c.gridwidth = 1;
 		c.gridheight = 1;
-		c.insets = new Insets(0,0,0,0);
+		c.insets = new Insets(0,-30,0,60);
     	pane.add(houseNumLbl, c);
 		
-		JTextField houseNumTxt = new JTextField("");
+		houseNumTxt = new JTextField("");
 		c.ipady = 20;
 		c.weightx = 1.0;
-		c.gridx = 1;
-		c.gridy = 6;
-		c.gridwidth = 2;
+		c.gridy = 4;
+		c.gridx = 3;
+		c.gridwidth = 1;
 		c.gridheight = 1;
-		c.insets = new Insets(0,0,0,0);
+		c.insets = new Insets(0,-30,0,-60);
     	pane.add(houseNumTxt, c);
 		
 		
 		//Street Name
 		JLabel streetNameLbl = new JLabel("Street Name:");
 		c.ipady = 20;
-		c.weightx = 0.1;
-		c.gridx = 0;
-		c.gridy = 7;
+		c.weightx = 0.1;		
+		c.gridy = 5;
+		c.gridx = 2;
 		c.gridwidth = 1;
 		c.gridheight = 1;
-		c.insets = new Insets(0,0,0,0);
+		c.insets = new Insets(0,-30,0,60);
     	pane.add(streetNameLbl, c);
 		
-		JTextField streetNameTxt = new JTextField("");
+		streetNameTxt = new JTextField("");
 		c.ipady = 20;
-		c.weightx = 1.0;
-		c.gridx = 1;
-		c.gridy = 7;
-		c.gridwidth = 2;
+		c.weightx = 1.0;	
+		c.gridy = 5;
+		c.gridx = 3;
+		c.gridwidth = 1;
 		c.gridheight = 1;
-		c.insets = new Insets(0,0,0,0);
+		c.insets = new Insets(0,-30,0,-60);
     	pane.add(streetNameTxt, c);
 		
 		
 		//City
 		JLabel cityLbl = new JLabel("City:");
 		c.ipady = 20;
-		c.weightx = 0.1;
-		c.gridx = 0;
-		c.gridy = 8;
+		c.weightx = 1.0;		
+		c.gridy = 4;
+		c.gridx = 4;
 		c.gridwidth = 1;
 		c.gridheight = 1;
-		c.insets = new Insets(0,0,0,0);
+		c.insets = new Insets(0,100,0,0);
     	pane.add(cityLbl, c);
 		
-		JTextField cityTxt = new JTextField("");
+		cityTxt = new JTextField("");
 		c.ipady = 20;
 		c.weightx = 1.0;
-		c.gridx = 1;
-		c.gridy = 8;
-		c.gridwidth = 2;
+		c.gridy = 4;
+		c.gridx = 5;	
+		c.gridwidth = 1;
 		c.gridheight = 1;
-		c.insets = new Insets(0,0,0,0);
+		c.insets = new Insets(0,30,0,0);
     	pane.add(cityTxt, c);
 		
 		
 		//County
 		JLabel countyLbl = new JLabel("County:");
 		c.ipady = 20;
-		c.weightx = 0.1;
-		c.gridx = 0;
-		c.gridy = 9;
+		c.weightx = 0.1;	
+		c.gridy = 6;
+		c.gridx = 4;
 		c.gridwidth = 1;
 		c.gridheight = 1;
-		c.insets = new Insets(0,0,0,0);
+		c.insets = new Insets(0,100,0,0);
     	pane.add(countyLbl, c);
 		
-		JTextField countyTxt = new JTextField("");
+		countyTxt = new JTextField("");
 		c.ipady = 20;
 		c.weightx = 1.0;
-		c.gridx = 1;
-		c.gridy = 9;
-		c.gridwidth = 2;
+		c.gridy = 6;
+		c.gridx = 5;	
+		c.gridwidth = 1;
 		c.gridheight = 1;
-		c.insets = new Insets(0,0,0,0);
+		c.insets = new Insets(0,30,0,0);
     	pane.add(countyTxt, c);
 		
 		
@@ -320,43 +348,43 @@ public class ProductsGUI
 		JLabel postCodeLbl = new JLabel("Post Code:");
 		c.ipady = 20;
 		c.weightx = 0.1;
-		c.gridx = 0;
-		c.gridy = 10;
+		c.gridy = 5;
+		c.gridx = 4;	
 		c.gridwidth = 1;
 		c.gridheight = 1;
-		c.insets = new Insets(0,0,0,0);
+		c.insets = new Insets(0,100,0,0);
     	pane.add(postCodeLbl, c);
 		
-		JTextField postCodeTxt = new JTextField("");
+		postCodeTxt = new JTextField("");
 		c.ipady = 20;
 		c.weightx = 1.0;
-		c.gridx = 1;
-		c.gridy = 10;
-		c.gridwidth = 2;
+		c.gridy = 5;
+		c.gridx = 5;	
+		c.gridwidth = 1;
 		c.gridheight = 1;
-		c.insets = new Insets(0,0,0,0);
+		c.insets = new Insets(0,30,0,0);
     	pane.add(postCodeTxt, c);
 		
 		
 		//Telephone No.
 		JLabel phoneNumLbl = new JLabel("Telephone Number: ");
 		c.ipady = 20;
-		c.weightx = 0.1;
+		c.weightx = 0.1;	
+		c.gridy = 6;
 		c.gridx = 0;
-		c.gridy = 11;
 		c.gridwidth = 1;
 		c.gridheight = 1;
-		c.insets = new Insets(0,0,0,0);
+		c.insets = new Insets(0,20,0,0);
     	pane.add(phoneNumLbl, c);
 		
-		JTextField phoneNumTxt = new JTextField("");
+		phoneNumTxt = new JTextField("");
 		c.ipady = 20;
 		c.weightx = 1.0;
-		c.gridx = 1;
-		c.gridy = 11;
-		c.gridwidth = 2;
+		c.gridy = 6;
+		c.gridx = 1;	
+		c.gridwidth = 1;
 		c.gridheight = 1;
-		c.insets = new Insets(0,0,0,0);
+		c.insets = new Insets(0,-30,0,60);
     	pane.add(phoneNumTxt, c);
 		
 		
@@ -364,22 +392,124 @@ public class ProductsGUI
 		JLabel emailLbl = new JLabel("Email Address:");
 		c.ipady = 20;
 		c.weightx = 0.1;
-		c.gridx = 0;
-		c.gridy = 12;
+		c.gridy = 6;
+		c.gridx = 2;	
 		c.gridwidth = 1;
 		c.gridheight = 1;
-		c.insets = new Insets(0,0,0,0);
+		c.insets = new Insets(0,-30,0,60);
     	pane.add(emailLbl, c);
 		
-		JTextField emailTxt = new JTextField("");
+		emailTxt = new JTextField("");
 		c.ipady = 20;
 		c.weightx = 1.0;
-		c.gridx = 1;
-		c.gridy = 12;
-		c.gridwidth = 2;
+		c.gridy = 6;
+		c.gridx = 3;
+		c.gridwidth = 1;
+		c.gridheight = 1;
+		c.insets = new Insets(0,-30,0,-60);
+    	pane.add(emailTxt, c);
+    	
+    	
+    	//horizontal separator
+		JSeparator lowerSeparator = new JSeparator(JSeparator.HORIZONTAL);
+		lowerSeparator.setPreferredSize(new Dimension(1,6));
+		c.gridy = 7;
+		c.gridx = 0;
+		c.gridwidth = 0;
+	    c.fill = GridBagConstraints.HORIZONTAL;
+	    c.insets = new Insets(5,0,-15,0);
+		c.weightx = 1;
+	    pane.add(lowerSeparator, c);
+    	
+    	
+    	JLabel discussionLbl = new JLabel("Previous Discussion History");
+		//c.ipady = 20;
+		//c.weightx = 1;
+		c.gridy = 8;
+		c.gridx = 0;		
+		c.gridwidth = 1;
+		c.gridheight = 1;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.insets = new Insets(0,0,0,0);
+    	pane.add(discussionLbl, c);
+		
+    	
+    	
+	    //add text area
+	    readOnlyTextArea = new JTextArea(10, 40);
+	    readOnlyTextArea.setEditable(false);
+		readOnlyTextArea.setFont(new Font("Serif", Font.ITALIC, 16));
+		readOnlyTextArea.setLineWrap(true);
+		readOnlyTextArea.setWrapStyleWord(true);
+		
+		readOnlyScrollPane = new JScrollPane(readOnlyTextArea);
+		readOnlyScrollPane.setVerticalScrollBarPolicy(
+        JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		//complaintScrollPane.setPreferredSize(new Dimension(400, 200));
+		//c.fill = GridBagConstraints.VERTICAL;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.weightx = 0.0;
+		//c.ipady = 200;
+		//c.ipadx = 200;
+		c.gridy = 9;
+		c.gridx = 0;	
+		c.gridwidth = 3;
 		c.gridheight = 1;
 		c.insets = new Insets(0,0,0,0);
-    	pane.add(emailTxt, c);
+		pane.add(readOnlyScrollPane, c);
+		//textArea.getDocument().addDocumentListener(this);
+	    
+	    
+	    
+	    //add text area
+	    discussTextArea = new JTextArea("Add discussion...", 10, 40);
+		discussTextArea.setFont(new Font("Serif", Font.ITALIC, 16));
+		discussTextArea.setLineWrap(true);
+		discussTextArea.setWrapStyleWord(true);
+		discussTextArea.addFocusListener(complaintFocusListener);
+		
+		discussScrollPane = new JScrollPane(discussTextArea);
+		discussScrollPane.setVerticalScrollBarPolicy(
+        JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		//complaintScrollPane.setPreferredSize(new Dimension(400, 200));
+		//c.fill = GridBagConstraints.VERTICAL;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.weightx = 0.0;
+		//c.ipady = 200;
+		//c.ipadx = 200;	
+		c.gridy = 9;
+		c.gridx = 3;
+		c.gridwidth = 3;
+		c.gridheight = 1;
+		c.insets = new Insets(0,0,0,0);
+		pane.add(discussScrollPane, c);
+		//textArea.getDocument().addDocumentListener(this);
+		
+		
+		JButton newComplButton = new JButton("Add Discussion to History");
+		//c.ipady = 20;
+		//c.weightx = 1;
+		c.gridy = 10;
+		c.gridx = 5;		
+		c.gridwidth = 1;
+		c.gridheight = 1;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.insets = new Insets(0,0,0,0);
+    	pane.add(newComplButton, c);
+		newComplButton.addActionListener(addDiscussionListener);
+		
+		
+		JButton prodDescButton = new JButton("Product Descriptions");
+		//c.ipady = 20;
+		//c.weightx = 1;
+		c.gridy = 11;
+		c.gridx = 0;		
+		c.gridwidth = 0;
+		c.gridheight = 1;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.insets = new Insets(10,0,0,0);
+    	pane.add(prodDescButton, c);
+		prodDescButton.addActionListener(productDescListener);
     }
     
     
@@ -402,6 +532,109 @@ public class ProductsGUI
     }
     
     //event listeners
+    class FetchCustListener implements ActionListener
+    	{
+    		public void actionPerformed(ActionEvent e)
+    		{
+    			String custId = custIdTxt.getText();
+				Connection connection = View.getConnection();
+				Statement st = null;
+				Statement st2 = null;
+				ResultSet rs = null;
+				ResultSet rs2 = null;
+			
+				String previousHistory = "";
+				try
+				{
+					st = connection.createStatement();
+					rs = st.executeQuery("SELECT cust_id,fName,sName,houseNo,streetName,city,county,postCode,telNo,email FROM customer WHERE cust_id =" + custId + ";");
+
+						
+							
+				boolean found = rs.next();
+				
+				if (!found)
+				{
+					JOptionPane.showMessageDialog(null,"No customer found!");
+				}
+				else
+				{
+					int recordCount = 0;
+					while(rs.next())
+					{
+						recordCount++;
+					}
+					rs.first();
+					for(int i = 0;i < (recordCount +1); i++)
+					{
+						fNameTxt.setText(rs.getString("fName"));
+						sNameTxt.setText(rs.getString("sName"));
+						houseNumTxt.setText(rs.getString("houseNo"));
+						streetNameTxt.setText(rs.getString("streetName"));
+						cityTxt.setText(rs.getString("city"));
+						countyTxt.setText(rs.getString("county"));
+						postCodeTxt.setText(rs.getString("postCode"));
+						phoneNumTxt.setText(rs.getString("telNo"));
+						emailTxt.setText(rs.getString("email"));	
+						custIdTxt.setEnabled(false);	
+						fNameTxt.setEnabled(false);
+						sNameTxt.setEnabled(false);
+						houseNumTxt.setEnabled(false);
+						streetNameTxt.setEnabled(false);
+						cityTxt.setEnabled(false);
+						countyTxt.setEnabled(false);
+						postCodeTxt.setEnabled(false);
+						phoneNumTxt.setEnabled(false);
+						emailTxt.setEnabled(false);
+						fetchCustHistButton.setEnabled(false);		
+					}
+					
+				}
+				}
+				catch(SQLException ex)
+				{
+				
+					ex.printStackTrace();
+				}
+				
+				try
+				{
+					st2 = connection.createStatement();
+					rs2 = st2.executeQuery("SELECT DATE_FORMAT(dateTime, '%W %D %M %Y %H:%i') AS dateTime,discussion FROM discussion WHERE cust_id =" + custId + ";");
+						
+							
+				boolean found2 = rs2.next();
+				
+				if (!found2)
+				{
+					readOnlyTextArea.setText("No Previous history");
+				}
+				else
+				{
+					int recordCount2 = 0;
+					while(rs2.next())
+					{
+						recordCount2++;
+					}
+					rs2.first();
+					for(int i = 0;i < (recordCount2 +1); i++)
+					{
+						previousHistory += rs2.getString(1) + "\n" + rs2.getString(2) + "\n\n";
+						rs2.next();
+					}
+					readOnlyTextArea.setText(previousHistory);
+					
+				}
+				}
+				catch(SQLException ex)
+				{
+				
+					ex.printStackTrace();
+				}
+
+    		}
+   		
+    	}
     class NavigationListener implements ActionListener
     	{
     		public void actionPerformed(ActionEvent e)
@@ -421,7 +654,7 @@ public class ProductsGUI
                 }
                 if (e.getActionCommand().equals("Joining")) {
                     jgui = new JoiningGUI();
-			    	jgui.pack();
+			    	jgui.createAndShowGUI();
 
                     frame.dispose();
                 }
@@ -437,7 +670,66 @@ public class ProductsGUI
 
                     frame.dispose();
                 }
+                if (e.getActionCommand().equals("Close")) {
+                	System.exit(0);
+             }
     		}
     	}
+    	
+    	class AddDiscussionListener implements ActionListener
+	    	{
+				public void actionPerformed(ActionEvent ev)
+				{
+					String discussionIn = discussTextArea.getText();
+					String previousDiscussion = readOnlyTextArea.getText();
+					String custId = custIdTxt.getText();
+			    	
+			    	
+				    	//Database insert
+				    	Connection connection = View.getConnection();
+						Statement st = null;
+						ResultSet rs = null;
+						DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+						Date date = new Date();
+						String dateNow = dateFormat.format(date);
+						try
+						{
+							st = connection.createStatement();
+							String discussionSql = "INSERT INTO discussion (cust_id, dateTime, discussion) VALUES (" + custId + ",'" + dateNow + "','" + discussionIn + "')"; 
+							st.executeUpdate(discussionSql);
+							JOptionPane.showMessageDialog(null,"Discussion added!");
+						}
+						catch(SQLException ex)
+						{
+							readOnlyTextArea.setText("Please Enter Customer ID.");
+							ex.printStackTrace();
+						}
+			    	
+				}	    		
+	    	}
+	    	
+	    class ProductDescListener implements ActionListener
+		{
+			public void actionPerformed(ActionEvent e)
+    		{
+				p = new ProductDescGUI();
+				p.createAndShowGUI();
+    		}	
+		}   
+    	
+    	
+    	class ComplaintFocusListener implements FocusListener
+		     {
+		     	public void focusGained(FocusEvent e)
+		     	{
+					discussTextArea.setText("");
+		     	}
+		        public void focusLost(FocusEvent e) 
+		        {
+		       		 
+		    	}
+		     	
+		     	
+		     }
 	
 }

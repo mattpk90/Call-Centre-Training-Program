@@ -18,7 +18,7 @@ public class Call_Centre_Training
 		v.setSize(300,300);
 		
 		CallLogView c = new CallLogView();
-		c.pack();
-		c.setSize(100,100);
+		c.createAndShowGUI();
+		//c.setSize(300,500);
     }
 }

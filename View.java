@@ -31,6 +31,7 @@ JMenu fileHelpMenu = new JMenu("Help");
 
 JMenuItem fileClose = new JMenuItem("Close");
 
+JMenuItem navValidation = new JMenuItem("Customer Validation");
 JMenuItem navComplaints = new JMenuItem("Complaints");
 JMenuItem navProducts = new JMenuItem("Products");
 JMenuItem navJoining = new JMenuItem("Joining");
@@ -47,6 +48,7 @@ ProductsGUI pgui;
 JoiningGUI jgui;
 ProblemsGUI pbgui;
 CustDetailsGUI cdgui;
+CustValidationGUI cvgui;
 
     public View()
     {
@@ -57,8 +59,6 @@ CustDetailsGUI cdgui;
 		Dimension scrnsize = toolkit.getScreenSize();
 		double width = (scrnsize.getWidth() / 2) - 150;
 		double height = (scrnsize.getHeight() / 2) - 150;
-		System.out.println(width);
-		System.out.println(height);
 
     	
      this.setResizable(false);
@@ -66,7 +66,7 @@ CustDetailsGUI cdgui;
 	 //this.setLocationRelativeTo(null);
 	 this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	 this.setVisible(true);
-     this.setLayout(new GridLayout(5,5));
+     this.setLayout(new GridLayout(6,6));
     
      //listener object
      NavigationListener navigationListener = new NavigationListener();
@@ -82,6 +82,7 @@ CustDetailsGUI cdgui;
      fileMenu.add(fileClose);
     
      //nav menu
+     pageNav.add(navValidation);
      pageNav.add(navComplaints);
      pageNav.add(navProducts);
      pageNav.add(navJoining);
@@ -91,6 +92,7 @@ CustDetailsGUI cdgui;
      //add listeners to menu items
      fileClose.addActionListener(navigationListener);
      
+     navValidation.addActionListener(navigationListener);
      navComplaints.addActionListener(navigationListener);
      navProducts.addActionListener(navigationListener);
      navJoining.addActionListener(navigationListener);
@@ -102,9 +104,11 @@ CustDetailsGUI cdgui;
      fileHelpMenu.add(helpGuide);
      fileHelpMenu.add(helpSearch);
     
+JButton validationButton = new JButton("Customer Validation");
+this.add(validationButton);
+validationButton.addActionListener(navigationListener);
     
-    
-     JButton complaintsButton = new JButton("Complaints");
+JButton complaintsButton = new JButton("Complaints");
 this.add(complaintsButton);
 complaintsButton.addActionListener(navigationListener);
 
@@ -130,43 +134,56 @@ custDetailsButton.addActionListener(navigationListener);
     //event listeners
     class NavigationListener implements ActionListener
      {
-     public void actionPerformed(ActionEvent e)
-     {
-     if (e.getActionCommand().equals("Complaints")) {
-                    cgui = new ComplaintGUI();
-                    cgui.createAndShowGUI();
+	     public void actionPerformed(ActionEvent e)
+	     {
+		     if (e.getActionCommand().equals("Complaints")) 
+		     {
+		     	cgui = new ComplaintGUI();
+		        cgui.createAndShowGUI();
+		
+		        dispose();
+		     }
+            if (e.getActionCommand().equals("Products")) 
+            {
+                pgui = new ProductsGUI();
+				pgui.createAndShowGUI();
 
-                    dispose();
+                dispose();
+            }
+            if (e.getActionCommand().equals("Joining")) 
+            {
+                jgui = new JoiningGUI();
+				jgui.createAndShowGUI();
+
+                dispose();
+            }
+            if (e.getActionCommand().equals("Common Problems")) 
+            {
+                pbgui = new ProblemsGUI();
+				pbgui.pack();
+
+                dispose();
+            }
+            if (e.getActionCommand().equals("Customer Details")) 
+            {
+                cdgui = new CustDetailsGUI();
+				cdgui.createAndShowGUI();
+
+                dispose();
+            }
+            if (e.getActionCommand().equals("Customer Validation")) 
+            {
+                cvgui = new CustValidationGUI();
+				cvgui.createAndShowGUI();
+
+                dispose();
+            }
+            if (e.getActionCommand().equals("Close")) {
+                System.exit(0);
+            }
+	     }
      }
-                if (e.getActionCommand().equals("Products")) {
-                    pgui = new ProductsGUI();
-					pgui.createAndShowGUI();
-
-                    dispose();
-                }
-                if (e.getActionCommand().equals("Joining")) {
-                    jgui = new JoiningGUI();
-					jgui.pack();
-
-                    dispose();
-                }
-                if (e.getActionCommand().equals("Common Problems")) {
-                    pbgui = new ProblemsGUI();
-					pbgui.pack();
-
-                    dispose();
-                }
-                if (e.getActionCommand().equals("Customer Details")) {
-                    cdgui = new CustDetailsGUI();
-					cdgui.createAndShowGUI();
-
-                    dispose();
-                }
-                if (e.getActionCommand().equals("Close")) {
-                    System.exit(0);
-                }
-     }
-     }
+     
      //This is the class which is called for every database connection
      public static Connection getConnection() {
 Connection conn = null;

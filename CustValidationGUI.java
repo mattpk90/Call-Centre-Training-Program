@@ -16,6 +16,8 @@ import java.io.IOException;
 import java.util.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class CustValidationGUI
 {
@@ -28,13 +30,18 @@ public class CustValidationGUI
 	
 	static JFrame frame;
 	static JMenuBar menuBar;
+	static JTextField sNameTxt, houseNoTxt, postCodeTxt, secQuestionTxt, secAnsTxt;
+	static JButton validateBtn, submitBtn;
 	
 	static NavigationListener navigationListener;
-
+	static ValidateListener validateListener;
+	static SubmitListener submitListener;
 	
 	public CustValidationGUI()
     { 		 	
     	navigationListener = new NavigationListener(); 
+    	validateListener = new ValidateListener();
+    	submitListener = new SubmitListener();
     }
     
     
@@ -112,22 +119,168 @@ public class CustValidationGUI
 		c.gridy = 0;
 		c.gridwidth = 0;
 		c.gridheight = 1;
-    	pane.add(menuBar, c);
+    	c.fill = GridBagConstraints.HORIZONTAL;
+    	pane.add(menuBar, c);	
     	//c.insets = new Insets(0,0,0,0);
     	//menuBar.addActionListener(navigationListener); 
     	
 	 	//add buttons
-    	JButton homeComplButton = new JButton("Home");
+    	JButton homeValButton = new JButton("Home");
 	    c.ipady = 20;
 	    c.weightx = 0.0;
     	c.gridx = 0;
 		c.gridy = 1;
+		c.gridwidth = 2;
+		c.gridheight = 1;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.insets = new Insets(0,0,0,0);
+    	pane.add(homeValButton, c);   
+    	homeValButton.addActionListener(navigationListener); 	
+    		
+    	JLabel sNameLbl = new JLabel("Surname:");
+		c.ipady = 20;
+		c.weightx = 0.1;
+		c.gridy = 2;
+		c.gridx = 0;
 		c.gridwidth = 1;
 		c.gridheight = 1;
-		//c.fill = GridBagConstraints.HORIZONTAL;
-		//c.insets = new Insets(0,0,0,0);
-    	pane.add(homeComplButton, c);   
-    	homeComplButton.addActionListener(navigationListener); 		
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.insets = new Insets(10,20,0,5);
+    	pane.add(sNameLbl, c);
+	
+		
+		sNameTxt = new JTextField(20);
+		sNameTxt.setFont(new Font("Serif", Font.ITALIC, 16));
+		c.ipady = 20;
+		c.weightx = 1.0;
+		c.gridy = 2;
+		c.gridx = 1;
+		c.gridwidth = 1;
+		c.gridheight = 1;
+		c.insets = new Insets(10,0,0,20);
+		c.fill = GridBagConstraints.HORIZONTAL;
+    	pane.add(sNameTxt, c);	
+    		
+    	JLabel houseNoLbl = new JLabel("House Number:");
+		c.ipady = 20;
+		c.weightx = 0.1;
+		c.gridy = 3;
+		c.gridx = 0;
+		c.gridwidth = 1;
+		c.gridheight = 1;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.insets = new Insets(10,20,0,5);
+    	pane.add(houseNoLbl, c);
+		
+		
+		houseNoTxt = new JTextField(20);
+		houseNoTxt.setFont(new Font("Serif", Font.ITALIC, 16));
+		c.ipady = 20;
+		c.weightx = 1.0;
+		c.gridy = 3;
+		c.gridx = 1;
+		c.gridwidth = 1;
+		c.gridheight = 1;
+		c.insets = new Insets(10,0,0,20);
+		c.fill = GridBagConstraints.HORIZONTAL;
+    	pane.add(houseNoTxt, c);	
+    		
+    	JLabel postCodeLbl = new JLabel("Post Code:");
+		c.ipady = 20;
+		c.weightx = 0.1;
+		c.gridy = 4;
+		c.gridx = 0;
+		c.gridwidth = 1;
+		c.gridheight = 1;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.insets = new Insets(10,20,0,5);
+    	pane.add(postCodeLbl, c);
+	
+		
+		postCodeTxt = new JTextField(20);
+		postCodeTxt.setFont(new Font("Serif", Font.ITALIC, 16));
+		c.ipady = 20;
+		c.weightx = 1.0;
+		c.gridy = 4;
+		c.gridx = 1;
+		c.gridwidth = 1;
+		c.gridheight = 1;
+		c.insets = new Insets(10,0,0,20);
+		c.fill = GridBagConstraints.HORIZONTAL;
+    	pane.add(postCodeTxt, c);	
+    		
+    	submitBtn = new JButton("Submit");
+	    c.ipady = 20;
+	    c.weightx = 0.0;
+    	c.gridx = 0;
+		c.gridy = 5;
+		c.gridwidth = 2;
+		c.gridheight = 1;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.insets = new Insets(10,0,0,0);
+    	pane.add(submitBtn, c);   
+    	submitBtn.addActionListener(submitListener);
+    	
+    	JLabel secQuestionLbl = new JLabel("Security Question:");
+		c.ipady = 20;
+		c.weightx = 0.1;
+		c.gridy = 6;
+		c.gridx = 0;
+		c.gridwidth = 1;
+		c.gridheight = 1;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.insets = new Insets(10,20,0,5);
+    	pane.add(secQuestionLbl, c);
+    	
+    	secQuestionTxt = new JTextField(20);
+    	secQuestionTxt.setEditable(false);
+		secQuestionTxt.setFont(new Font("Serif", Font.ITALIC, 16));
+		c.ipady = 20;
+		c.weightx = 1.0;
+		c.gridy = 6;
+		c.gridx = 1;
+		c.gridwidth = 3;
+		c.gridheight = 1;
+		c.insets = new Insets(10,0,0,20);
+		c.fill = GridBagConstraints.HORIZONTAL;
+    	pane.add(secQuestionTxt, c);
+    	
+    	JLabel secAnsLbl = new JLabel("Security Answer:");
+		c.ipady = 20;
+		c.weightx = 0.1;
+		c.gridy = 7;
+		c.gridx = 0;
+		c.gridwidth = 1;
+		c.gridheight = 1;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.insets = new Insets(10,20,0,5);
+    	pane.add(secAnsLbl, c);
+    	
+    	secAnsTxt = new JTextField(20);
+		secAnsTxt.setFont(new Font("Serif", Font.ITALIC, 16));
+		c.ipady = 20;
+		c.weightx = 1.0;
+		c.gridy = 7;
+		c.gridx = 1;
+		c.gridwidth = 3;
+		c.gridheight = 1;
+		c.insets = new Insets(10,0,0,20);
+		c.fill = GridBagConstraints.HORIZONTAL;
+    	pane.add(secAnsTxt, c);		
+    	secAnsTxt.setEnabled(false);
+    		
+    	validateBtn = new JButton("Validate");
+	    c.ipady = 20;
+	    c.weightx = 0.0;
+    	c.gridx = 0;
+		c.gridy = 8;
+		c.gridwidth = 2;
+		c.gridheight = 1;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.insets = new Insets(10,0,0,0);
+    	pane.add(validateBtn, c);   
+    	validateBtn.setEnabled(false);
+    	validateBtn.addActionListener(validateListener);
     }
     
     
@@ -150,8 +303,111 @@ public class CustValidationGUI
         //fetchCustHistButton.addActionListener(fetchCustHistListener);	
     }
     
-    
-    
+    class SubmitListener implements ActionListener
+    {
+    	public void actionPerformed(ActionEvent e)
+    	{
+    		
+    		
+    		
+			String regexp="^([A-PR-UWYZ](([0-9](([0-9]|[A-HJKSTUW])?)?)|([A-HK-Y][0-9]([0-9]|[ABEHMNPRVWXY])?)) [0-9][ABD-HJLNP-UW-Z]{2})|GIR 0AA$";
+			Pattern pattern = Pattern.compile(regexp);
+			Matcher matcher = pattern.matcher(postCodeTxt.getText().toUpperCase());
+    	
+    		if(("".equals(sNameTxt)) || ("".equals(houseNoTxt))||("".equals(postCodeTxt)))
+    		{
+    			JOptionPane.showMessageDialog(null,"No blank fields allowed!","Validation Warning",JOptionPane.WARNING_MESSAGE);
+    		}
+    		else if (matcher.matches())
+    		{
+    			
+    			Connection connection = View.getConnection();
+				Statement st = null;
+				ResultSet rs = null;
+				
+				try
+				{
+					st = connection.createStatement();
+					String submitSql = "SELECT secQues FROM customer WHERE sName =  '" + sNameTxt.getText() + "' AND houseNo =  '" + houseNoTxt.getText() + "' AND postCode = '" + postCodeTxt.getText() + "'"; 
+					rs = st.executeQuery(submitSql);
+	
+					boolean found = rs.next();
+					
+					if (!found)
+					{
+					  	JOptionPane.showMessageDialog(null,"No existing Customer!","Validation Warning",JOptionPane.WARNING_MESSAGE);
+					  	sNameTxt.setText("");
+					  	houseNoTxt.setText("");
+					  	postCodeTxt.setText("");
+					  	secQuestionTxt.setText("");
+					  	secAnsTxt.setText("");	
+					}
+					else
+					{
+						secQuestionTxt.setText(rs.getString(1));
+						houseNoTxt.setEnabled(false);
+						sNameTxt.setEnabled(false);	
+						postCodeTxt.setEnabled(false);
+						submitBtn.setEnabled(false);
+						secAnsTxt.setEnabled(true);
+						validateBtn.setEnabled(true);							
+					}
+				}
+				catch(SQLException ex)
+				{
+					ex.printStackTrace();
+				}
+    		}
+    		else
+    		{
+    			JOptionPane.showMessageDialog(null,"Incorrect Post Code Format!","Validation Warning",JOptionPane.WARNING_MESSAGE);
+    		}
+    	}
+    }
+    class ValidateListener implements ActionListener
+    {
+    	public void actionPerformed(ActionEvent e)
+    	{
+    			Connection connection = View.getConnection();
+				Statement st = null;
+				ResultSet rs = null;
+				
+				try
+				{
+					st = connection.createStatement();
+					String validateSql = "SELECT * FROM customer WHERE sName =  '" + sNameTxt.getText() + "' AND houseNo =  '" + houseNoTxt.getText() + "' AND postCode = '" + postCodeTxt.getText() + "' AND secAns ='" + secAnsTxt.getText() + "'"; 
+					rs = st.executeQuery(validateSql);
+	
+					boolean found = rs.next();
+					
+					if (!found)
+					{
+					  	JOptionPane.showMessageDialog(null,"Incorrect security answer, please try again.","Validation Warning",JOptionPane.WARNING_MESSAGE);
+					  	secAnsTxt.setText("");
+					}
+					else
+					{
+						JOptionPane.showMessageDialog(null,"Customer validated, please continue with call.");	
+						sNameTxt.setText("");
+					  	houseNoTxt.setText("");
+					  	postCodeTxt.setText("");
+					  	secQuestionTxt.setText("");
+					  	secAnsTxt.setText("");
+					  	
+						houseNoTxt.setEnabled(true);
+						sNameTxt.setEnabled(true);	
+						postCodeTxt.setEnabled(true);
+						submitBtn.setEnabled(true);
+						secAnsTxt.setEnabled(false);
+						validateBtn.setEnabled(false);			
+					}
+				}
+				catch(SQLException ex)
+				{
+					ex.printStackTrace();
+				}
+    	}
+    }
     class NavigationListener implements ActionListener
     	{
     		public void actionPerformed(ActionEvent e)
@@ -171,7 +427,7 @@ public class CustValidationGUI
                 }
                 if (e.getActionCommand().equals("Joining")) {
                     jgui = new JoiningGUI();
-			    	jgui.pack();
+			    	jgui.createAndShowGUI();
 
                     frame.dispose();
                 }

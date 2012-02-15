@@ -113,7 +113,7 @@ public class ProblemsGUI extends JFrame
                 }
                 if (e.getActionCommand().equals("Joining")) {
                     jgui = new JoiningGUI();
-			    	jgui.pack();
+			    	jgui.createAndShowGUI();
 
                     dispose();
                 }

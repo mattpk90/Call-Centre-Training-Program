@@ -33,7 +33,7 @@ public class ComplaintGUI
 	JoiningGUI jgui;
 	ProblemsGUI pbgui;
 	CustDetailsGUI cdgui;
-	ComplaintGUI cgui;
+	CustValidationGUI cvgui;
 	
 	static NavigationListener navigationListener;	
 	static FetchCustHistListener fetchCustHistListener;
@@ -79,6 +79,7 @@ public class ComplaintGUI
 		JMenuItem fileClose = new JMenuItem("Close");
 		
 		JMenuItem navHome = new JMenuItem("Home");
+		JMenuItem navValidation = new JMenuItem("Customer Validation");
 		JMenuItem navProducts = new JMenuItem("Products");
 		JMenuItem navJoining = new JMenuItem("Joining");
 		JMenuItem navProblems = new JMenuItem("Common Problems");
@@ -111,6 +112,7 @@ public class ComplaintGUI
     	
     	//nav menu
     	pageNav.add(navHome);
+    	pageNav.add(navValidation);
     	pageNav.add(navProducts);
     	pageNav.add(navJoining);
     	pageNav.add(navProblems);
@@ -118,6 +120,7 @@ public class ComplaintGUI
     	
     	fileClose.addActionListener(navigationListener);
     	navHome.addActionListener(navigationListener);
+    	navValidation.addActionListener(navigationListener);
     	navProducts.addActionListener(navigationListener);
     	navJoining.addActionListener(navigationListener);
     	navProblems.addActionListener(navigationListener);
@@ -302,7 +305,7 @@ public class ComplaintGUI
                 }
                 if (e.getActionCommand().equals("Joining")) {
                     jgui = new JoiningGUI();
-			    	jgui.pack();
+			    	jgui.createAndShowGUI();
 			    	
                     frame.dispose();
                 }
@@ -318,6 +321,13 @@ public class ComplaintGUI
 
                     frame.dispose();
                 }
+                if (e.getActionCommand().equals("Customer Validation")) 
+            	{
+                	cvgui = new CustValidationGUI();
+					cvgui.createAndShowGUI();
+
+                	frame.dispose();
+            	}
                 if (e.getActionCommand().equals("Close")) {
                     System.exit(0);
                 }

@@ -9,6 +9,17 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.sql.SQLException;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.sql.PreparedStatement;
+import java.sql.Blob;
+import java.io.IOException;
 
 public class CustDetailsGUI
 {		
@@ -20,6 +31,11 @@ public class CustDetailsGUI
     final static boolean RIGHT_TO_LEFT = false;
     
     static NavigationListener navigationListener;
+    static DeleteCustomerListener deleteCustomerListener;
+    static UpdateCustomerListener updateCustomerListener;
+    static FetchCustListener fetchCustListener;
+    static JTextField custIdTxt, fNameTxt, sNameTxt, houseNumTxt, streetNameTxt, cityTxt, countyTxt, postCodeTxt, phoneNumTxt, emailTxt, secAnswerTxt;
+    static JComboBox secQuestionCombo;
     
     static String[] secQuestionString = {"First pets name?", "Mothers maiden name?", "Favourite actor?"};
 	
@@ -32,6 +48,9 @@ public class CustDetailsGUI
 	public CustDetailsGUI()
     { 	   	
     	navigationListener = new NavigationListener();
+    	deleteCustomerListener = new DeleteCustomerListener();
+    	updateCustomerListener = new UpdateCustomerListener();
+    	fetchCustListener = new FetchCustListener();
     }
     
     
@@ -136,7 +155,7 @@ public class CustDetailsGUI
     	pane.add(custIdLbl, c);
 		
 		
-		JTextField custIdTxt = new JTextField("");
+		custIdTxt = new JTextField("");
 		//c.ipady = 20;
 		c.weightx = 1.0;
 		c.gridx = 1;
@@ -156,7 +175,8 @@ public class CustDetailsGUI
 		c.gridheight = 1;
 		c.insets = new Insets(0,-35,15,0);
     	pane.add(fetchCustDetailsButton, c);
-		//fetchCustHistButton.addActionListener(fetchCustHistListener);
+		fetchCustDetailsButton.addActionListener(fetchCustListener);
+		
 		
 		
 		
@@ -173,7 +193,7 @@ public class CustDetailsGUI
 		c.insets = new Insets(0,0,0,0);
     	pane.add(fNameLbl, c);
 		
-		JTextField fNameTxt = new JTextField("");
+		fNameTxt = new JTextField("");
 		c.ipady = 20;
 		c.weightx = 1.0;
 		c.gridx = 1;
@@ -195,7 +215,7 @@ public class CustDetailsGUI
 		c.insets = new Insets(0,0,0,0);
     	pane.add(sNameLbl, c);
 		
-		JTextField sNameTxt = new JTextField("");
+		sNameTxt = new JTextField("");
 		c.ipady = 20;
 		c.weightx = 1.0;
 		c.gridx = 1;
@@ -217,7 +237,7 @@ public class CustDetailsGUI
 		c.insets = new Insets(0,0,0,0);
     	pane.add(houseNumLbl, c);
 		
-		JTextField houseNumTxt = new JTextField("");
+		houseNumTxt = new JTextField("");
 		c.ipady = 20;
 		c.weightx = 1.0;
 		c.gridx = 1;
@@ -239,7 +259,7 @@ public class CustDetailsGUI
 		c.insets = new Insets(0,0,0,0);
     	pane.add(streetNameLbl, c);
 		
-		JTextField streetNameTxt = new JTextField("");
+		streetNameTxt = new JTextField("");
 		c.ipady = 20;
 		c.weightx = 1.0;
 		c.gridx = 1;
@@ -261,7 +281,7 @@ public class CustDetailsGUI
 		c.insets = new Insets(0,0,0,0);
     	pane.add(cityLbl, c);
 		
-		JTextField cityTxt = new JTextField("");
+		cityTxt = new JTextField("");
 		c.ipady = 20;
 		c.weightx = 1.0;
 		c.gridx = 1;
@@ -283,7 +303,7 @@ public class CustDetailsGUI
 		c.insets = new Insets(0,0,0,0);
     	pane.add(countyLbl, c);
 		
-		JTextField countyTxt = new JTextField("");
+		countyTxt = new JTextField("");
 		c.ipady = 20;
 		c.weightx = 1.0;
 		c.gridx = 1;
@@ -305,7 +325,7 @@ public class CustDetailsGUI
 		c.insets = new Insets(0,0,0,0);
     	pane.add(postCodeLbl, c);
 		
-		JTextField postCodeTxt = new JTextField("");
+		postCodeTxt = new JTextField("");
 		c.ipady = 20;
 		c.weightx = 1.0;
 		c.gridx = 1;
@@ -327,7 +347,7 @@ public class CustDetailsGUI
 		c.insets = new Insets(0,0,0,0);
     	pane.add(phoneNumLbl, c);
 		
-		JTextField phoneNumTxt = new JTextField("");
+		phoneNumTxt = new JTextField("");
 		c.ipady = 20;
 		c.weightx = 1.0;
 		c.gridx = 1;
@@ -349,7 +369,7 @@ public class CustDetailsGUI
 		c.insets = new Insets(0,0,0,0);
     	pane.add(emailLbl, c);
 		
-		JTextField emailTxt = new JTextField("");
+		emailTxt = new JTextField("");
 		c.ipady = 20;
 		c.weightx = 1.0;
 		c.gridx = 1;
@@ -371,7 +391,7 @@ public class CustDetailsGUI
 		c.insets = new Insets(0,0,0,0);
     	pane.add(secQuestionLbl, c);
 		
-		JComboBox secQuestionCombo = new JComboBox(secQuestionString);
+		secQuestionCombo = new JComboBox(secQuestionString);
 		//c.ipadx = 100;
 		c.weightx = 0.0;
 		c.gridx = 1;
@@ -394,7 +414,7 @@ public class CustDetailsGUI
 		c.insets = new Insets(0,0,0,0);
     	pane.add(secAnswerLbl, c);
 		
-		JTextField secAnswerTxt = new JTextField("");
+		secAnswerTxt = new JTextField("");
 		c.ipady = 20;
 		c.weightx = 1.0;
 		c.gridx = 1;
@@ -414,7 +434,20 @@ public class CustDetailsGUI
 		c.gridheight = 1;
 		c.insets = new Insets(10,0,0,0);
     	pane.add(updateDetailsButton, c);   
-    	//homeComplButton.addActionListener(navigationListener);
+    	updateDetailsButton.addActionListener(updateCustomerListener);
+    	
+    	//button
+    	JButton deleteAccountButton = new JButton("Delete Account");
+	    c.ipady = 20;
+	    c.weightx = 0.0;
+    	c.gridx = 0;
+		c.gridy = 15;
+		c.gridwidth = 3;
+		c.gridheight = 1;
+		c.insets = new Insets(10,0,0,0);
+    	pane.add(deleteAccountButton, c);   
+    	deleteAccountButton.addActionListener(deleteCustomerListener);
+
     }
     
     
@@ -437,6 +470,131 @@ public class CustDetailsGUI
     
     
     //event listeners
+    class DeleteCustomerListener implements ActionListener
+    {
+    		public void actionPerformed(ActionEvent e)
+    		{
+
+    	      int result = JOptionPane.showConfirmDialog(null,"Are you sure you want to delete customer?","Delete Account",JOptionPane.YES_NO_OPTION,JOptionPane.WARNING_MESSAGE);
+    	       if (result == JOptionPane.YES_OPTION) {
+    	      String custId = custIdTxt.getText();	
+    	      Connection connection = View.getConnection();
+			  Statement st = null;
+			  ResultSet rs = null;
+					
+					try
+					{
+						st = connection.createStatement();
+						String deletingSql = "DELETE FROM customer WHERE cust_id=" + custId + ";";
+						
+						st.executeUpdate(deletingSql);
+						JOptionPane.showMessageDialog(null,"Customer Deleted!");
+	
+					}
+					catch(SQLException ex)
+					{
+						ex.printStackTrace();
+					}
+    	      
+    	       }
+    	       else if (result == JOptionPane.NO_OPTION) {
+          	   System.out.println("Delete cancelled");
+        }
+    	       
+    		}
+    	
+    }
+    
+        class UpdateCustomerListener implements ActionListener
+    {
+    		public void actionPerformed(ActionEvent e)
+    		{
+
+    	      JOptionPane.showConfirmDialog(null,"Are you sure you want to update customer details?","Account update",JOptionPane.YES_NO_OPTION);
+    	    
+ 
+    		}
+    	
+    }
+    
+        class FetchCustListener implements ActionListener
+     {
+		public void actionPerformed(ActionEvent ev)
+			{
+			
+				String custId = custIdTxt.getText();
+				String secQues = ""; 
+				Connection connection = View.getConnection();
+				Statement st = null;
+				ResultSet rs = null;
+				String Q1 = "Mothers Maiden Name?";
+				String Q2 = "Favourite Actor?";
+				
+				
+				try
+				{
+					st = connection.createStatement();
+					rs = st.executeQuery("SELECT fName,sName,houseNo,streetName,city,county,postCode,telNo,email,secQues,secAns FROM customer WHERE cust_id =" + custId + ";");
+					
+				boolean found = rs.next();
+				
+				if (!found)
+				{
+					JOptionPane.showMessageDialog(null,"No customer found!");
+				}
+				else
+				{
+					int recordCount = 0;
+					while(rs.next())
+					{
+						recordCount++;
+					}
+					rs.first();
+					for(int i = 0;i < (recordCount +1); i++)
+					{
+						fNameTxt.setText(rs.getString("fName"));
+						sNameTxt.setText(rs.getString("sName"));
+						houseNumTxt.setText(rs.getString("houseNo"));
+						streetNameTxt.setText(rs.getString("streetName"));
+						cityTxt.setText(rs.getString("city"));
+						countyTxt.setText(rs.getString("county"));
+						postCodeTxt.setText(rs.getString("postCode"));
+						phoneNumTxt.setText(rs.getString("telNo"));
+						emailTxt.setText(rs.getString("email"));
+						secQues = rs.getString("secQues");
+						if (Q1.equals(secQues))
+							{
+								secQuestionCombo.setSelectedIndex(1);
+							}
+						else if (Q2.equals(secQues))
+							{
+								secQuestionCombo.setSelectedIndex(2);
+							}
+						else
+							{
+								secQuestionCombo.setSelectedIndex(0);	
+							}		
+						secAnswerTxt.setText(rs.getString("secAns"));
+						rs.next();
+					}
+					
+				}
+					
+
+					
+					
+				}
+				catch(SQLException ex)
+				{
+				
+					ex.printStackTrace();
+				}
+			
+			
+			}
+     }
+    
+    
     class NavigationListener implements ActionListener
     	{
     		public void actionPerformed(ActionEvent e)
@@ -456,7 +614,7 @@ public class CustDetailsGUI
                 }
                 if (e.getActionCommand().equals("Joining")) {
                     jgui = new JoiningGUI();
-			    	jgui.pack();
+			    	jgui.createAndShowGUI();
 
                     frame.dispose();
                 }
@@ -468,7 +626,7 @@ public class CustDetailsGUI
                 }
                 if (e.getActionCommand().equals("Products")) {
                     pgui = new ProductsGUI();
-			    	pgui.createAndShowGUI();
+			    
 
                     frame.dispose();
                 }

@@ -24,70 +24,65 @@ import java.io.IOException;
 
 public class JoiningGUI extends JFrame
 {
-	JMenu fileMenu = new JMenu("File");
-	JMenu pageNav = new JMenu("Navigation");
-	JMenu fileHelpMenu = new JMenu("Help");
-	
-
-	JMenuItem fileClose = new JMenuItem("Close");
-	
-	JMenuItem navHome = new JMenuItem("Home");
-	JMenuItem navProducts = new JMenuItem("Products");
-	JMenuItem navComplaints = new JMenuItem("Complaints");
-	JMenuItem navProblems = new JMenuItem("Common Problems");
-	JMenuItem navCustDetails = new JMenuItem("Customer Details");
-	
-	JMenuItem helpFAQ = new JMenuItem("FAQ");
-	JMenuItem helpGuide = new JMenuItem("System guide");
-	JMenuItem helpSearch = new JMenuItem("Search");
-	
-	
-	JTextField fNameText, sNameText, houseNumberText, streetNameText, cityText, 
-		countyText, postcodeText, phoneText, emailText, secAnsText;
-	JLabel emptyLbl, fNameLbl, sNameLbl, houseNumberLbl, streetNameLbl, cityLbl, 
-		countyLbl, postcodeLbl, phoneLbl, emailLbl, secQuestionLbl, secAnsLbl;
-	
-	//dropdown box
-	String[] secQuestionString = {"First pets name?", "Mothers maiden name?", "Favourite actor?"};
-	JComboBox secQuestionCombo;
-	
-	//buttons
-	JButton homeButton = new JButton("Home");
-	JButton addCustButton = new JButton("Add Customer");
-	JButton resetButton = new JButton("Reset");
-	
-	
 	View v;
 	ComplaintGUI cgui;
 	ProductsGUI pgui;
 	ProblemsGUI pbgui;
 	CustDetailsGUI cdgui;
+	CustValidationGUI cvgui;
+	
+	static NavigationListener navigationListener;
+	static AddCustomerListener addCustomerListener;
+	static ResetListener resetListener;
+	
+	static JFrame frame;
+	static JMenuBar menuBar;
+	
+	public static JTextField custIdTxt, fNameTxt, sNameTxt, houseNumTxt, streetNameTxt, cityTxt, countyTxt, postCodeTxt, phoneNumTxt, emailTxt, secAnswerTxt;
+    static JComboBox secQuestionCombo;
+    
+    static String[] secQuestionString = {"First pets name?", "Mothers maiden name?", "Favourite actor?"};
 	
 	public JoiningGUI()
-    { 	
-    	
-    	this.setResizable(false);
-		this.setLocationRelativeTo(null);
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);		
-		this.setVisible(true);  	
-    	this.setLayout(new GridLayout(13,2));
-    	
-    	//navigation inner class listener
-    	NavigationListener navigationListener = new NavigationListener();   
-    	AddCustomerListener addCustomerListener = new AddCustomerListener();
-    	ResetListener resetListener = new ResetListener();
-    	
-    	
-    	//button listeners
-		homeButton.addActionListener(navigationListener);	
-		addCustButton.addActionListener(addCustomerListener);	
-		resetButton.addActionListener(resetListener);
+    {
+    	navigationListener = new NavigationListener();   
+    	addCustomerListener = new AddCustomerListener();
+    	resetListener = new ResetListener();
+    }
+	
+	public static void addComponentsToPane(Container pane)
+    {      	  	  	
+		//scroll pane
+		JScrollPane complaintScrollPane;
+		JScrollPane readOnlyScrollPane;
 		
+		//menus
+		JMenu fileMenu = new JMenu("File");
+		JMenu pageNav = new JMenu("Navigation");
+		JMenu fileHelpMenu = new JMenu("Help");
 		
+		//menu items
+		JMenuItem fileClose = new JMenuItem("Close");
+		
+		JMenuItem navHome = new JMenuItem("Home");
+		JMenuItem navValidation = new JMenuItem("Customer Validation");
+		JMenuItem navProducts = new JMenuItem("Products");
+		JMenuItem navComplaints = new JMenuItem("Complaints");
+		JMenuItem navProblems = new JMenuItem("Common Problems");
+		JMenuItem navCustDetails = new JMenuItem("Customer Details");
+		
+		JMenuItem helpFAQ = new JMenuItem("FAQ");
+		JMenuItem helpGuide = new JMenuItem("System guide");
+		JMenuItem helpSearch = new JMenuItem("Search");
+
+	    pane.setLayout(new GridBagLayout());
+	    GridBagConstraints c = new GridBagConstraints();
+	       	    
+	    
 		//menu bar
-		JMenuBar menuBar = new JMenuBar();
-		this.setJMenuBar(menuBar);
+		menuBar = new JMenuBar();
+		pane.add(menuBar);
+		//pane.setJMenuBar(menuBar);
     	menuBar.add(fileMenu);
     	menuBar.add(pageNav);
     	menuBar.add(fileHelpMenu);
@@ -97,14 +92,17 @@ public class JoiningGUI extends JFrame
     	
     	//nav menu
     	pageNav.add(navHome);
-    	pageNav.add(navComplaints);
+    	pageNav.add(navValidation);
     	pageNav.add(navProducts);
+    	pageNav.add(navComplaints);
     	pageNav.add(navProblems);
     	pageNav.add(navCustDetails);
     	
+    	fileClose.addActionListener(navigationListener);
     	navHome.addActionListener(navigationListener);
-    	navComplaints.addActionListener(navigationListener);
+    	navValidation.addActionListener(navigationListener);
     	navProducts.addActionListener(navigationListener);
+    	navComplaints.addActionListener(navigationListener);
     	navProblems.addActionListener(navigationListener);
     	navCustDetails.addActionListener(navigationListener);
     	
@@ -113,83 +111,319 @@ public class JoiningGUI extends JFrame
     	fileHelpMenu.add(helpGuide);
     	fileHelpMenu.add(helpSearch); 
     	
-    	//labels and text fields 
-    	emptyLbl = new JLabel("");
-    		   	
-    	fNameLbl = new JLabel("First Name:");
-    	fNameText = new JTextField(20);
     	
-    	sNameLbl = new JLabel("Surname:");
-    	sNameText = new JTextField(20);
+    	//add menu
+    	c.ipady = 15;
+	    c.weightx = 0.5;
+    	c.gridx = 0;
+		c.gridy = 0;
+		c.gridwidth = 0;
+		c.gridheight = 1;
+		c.fill = GridBagConstraints.HORIZONTAL;
+    	pane.add(menuBar, c);
+    	//c.insets = new Insets(0,0,0,0);
+    	//menuBar.addActionListener(navigationListener); 
     	
-    	houseNumberLbl = new JLabel("House Number:");
-    	houseNumberText = new JTextField(20);
+	 	
+    	JButton homeComplButton = new JButton("Home");
+	    c.ipady = 20;
+	    c.weightx = 0.0;
+    	c.gridx = 0;
+		c.gridy = 1;
+		c.gridwidth = 0;
+		c.gridheight = 1;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		//c.insets = new Insets(0,0,0,0);
+    	pane.add(homeComplButton, c);   
+    	homeComplButton.addActionListener(navigationListener); 	
     	
-    	streetNameLbl = new JLabel("Street Name:");
-    	streetNameText = new JTextField(20);
-    	
-    	cityLbl = new JLabel("City:");
-    	cityText = new JTextField(20);
-    	
-    	countyLbl = new JLabel("County:");
-    	countyText = new JTextField(20);
-    	
-    	postcodeLbl = new JLabel("Postcode:");
-    	postcodeText = new JTextField(20);
-    	
-    	phoneLbl = new JLabel("Phone Number:");
-    	phoneText = new JTextField(20);
-    	
-    	emailLbl = new JLabel("E-mail:");
-    	emailText = new JTextField(20);
-    	
-    	secQuestionLbl = new JLabel("Select Security Question:");
-    	secQuestionCombo = new JComboBox(secQuestionString);
-    	secQuestionCombo.setSelectedIndex(0);
-    	
-    	secAnsLbl = new JLabel("Security Answer:");
-    	secAnsText = new JTextField(20);
 
-
-    	this.add(homeButton);
-    	this.add(emptyLbl);
-    	
-    	this.add(fNameLbl);
-        this.add(fNameText);
-        
-        this.add(sNameLbl);
-        this.add(sNameText);
-        
-        this.add(houseNumberLbl);
-        this.add(houseNumberText);
-        
-        this.add(streetNameLbl);
-        this.add(streetNameText);
-        
-        this.add(cityLbl);
-        this.add(cityText);
-        
-        this.add(countyLbl);
-        this.add(countyText);
-        
-        this.add(postcodeLbl);
-        this.add(postcodeText);
-        
-        this.add(phoneLbl);
-        this.add(phoneText);
-        
-        this.add(emailLbl);
-        this.add(emailText);
-        
-      	this.add(secQuestionLbl); 
-        this.add(secQuestionCombo);
-        
-        this.add(secAnsLbl);
-        this.add(secAnsText);
-        
-    	this.add(addCustButton);
-    	this.add(resetButton);
+		///////////////customer details fields/////////////////
+		//First Name
+		JLabel fNameLbl = new JLabel("First Name:");
+		c.ipady = 20;
+		c.weightx = 0.1;
+		c.gridx = 0;
+		c.gridy = 3;
+		c.gridwidth = 1;
+		c.gridheight = 1;
+		c.insets = new Insets(0,0,0,0);
+    	pane.add(fNameLbl, c);
+		
+		fNameTxt = new JTextField("");
+		c.ipady = 20;
+		c.weightx = 1.0;
+		c.gridx = 1;
+		c.gridy = 3;
+		c.gridwidth = 2;
+		c.gridheight = 1;
+		c.insets = new Insets(0,0,0,0);
+    	pane.add(fNameTxt, c);
+		
+		
+		//Surname
+		JLabel sNameLbl = new JLabel("Surname:");
+		c.ipady = 20;
+		c.weightx = 0.1;
+		c.gridx = 0;
+		c.gridy = 4;
+		c.gridwidth = 1;
+		c.gridheight = 1;
+		c.insets = new Insets(0,0,0,0);
+    	pane.add(sNameLbl, c);
+		
+		sNameTxt = new JTextField("");
+		c.ipady = 20;
+		c.weightx = 1.0;
+		c.gridx = 1;
+		c.gridy = 4;
+		c.gridwidth = 2;
+		c.gridheight = 1;
+		c.insets = new Insets(0,0,0,0);
+    	pane.add(sNameTxt, c);
+		
+		
+		//House Number
+		JLabel houseNumLbl = new JLabel("House Number:");
+		c.ipady = 20;
+		c.weightx = 0.1;
+		c.gridx = 0;
+		c.gridy = 5;
+		c.gridwidth = 1;
+		c.gridheight = 1;
+		c.insets = new Insets(0,0,0,0);
+    	pane.add(houseNumLbl, c);
+		
+		houseNumTxt = new JTextField("");
+		c.ipady = 20;
+		c.weightx = 1.0;
+		c.gridx = 1;
+		c.gridy = 5;
+		c.gridwidth = 2;
+		c.gridheight = 1;
+		c.insets = new Insets(0,0,0,0);
+    	pane.add(houseNumTxt, c);
+		
+		
+		//Street Name
+		JLabel streetNameLbl = new JLabel("Street Name:");
+		c.ipady = 20;
+		c.weightx = 0.1;
+		c.gridx = 0;
+		c.gridy = 6;
+		c.gridwidth = 1;
+		c.gridheight = 1;
+		c.insets = new Insets(0,0,0,0);
+    	pane.add(streetNameLbl, c);
+		
+		streetNameTxt = new JTextField("");
+		c.ipady = 20;
+		c.weightx = 1.0;
+		c.gridx = 1;
+		c.gridy = 6;
+		c.gridwidth = 2;
+		c.gridheight = 1;
+		c.insets = new Insets(0,0,0,0);
+    	pane.add(streetNameTxt, c);
+		
+		
+		//City
+		JLabel cityLbl = new JLabel("City:");
+		c.ipady = 20;
+		c.weightx = 0.1;
+		c.gridx = 0;
+		c.gridy = 7;
+		c.gridwidth = 1;
+		c.gridheight = 1;
+		c.insets = new Insets(0,0,0,0);
+    	pane.add(cityLbl, c);
+		
+		cityTxt = new JTextField("");
+		c.ipady = 20;
+		c.weightx = 1.0;
+		c.gridx = 1;
+		c.gridy = 7;
+		c.gridwidth = 2;
+		c.gridheight = 1;
+		c.insets = new Insets(0,0,0,0);
+    	pane.add(cityTxt, c);
+		
+		
+		//County
+		JLabel countyLbl = new JLabel("County:");
+		c.ipady = 20;
+		c.weightx = 0.1;
+		c.gridx = 0;
+		c.gridy = 8;
+		c.gridwidth = 1;
+		c.gridheight = 1;
+		c.insets = new Insets(0,0,0,0);
+    	pane.add(countyLbl, c);
+		
+		countyTxt = new JTextField("");
+		c.ipady = 20;
+		c.weightx = 1.0;
+		c.gridx = 1;
+		c.gridy = 8;
+		c.gridwidth = 2;
+		c.gridheight = 1;
+		c.insets = new Insets(0,0,0,0);
+    	pane.add(countyTxt, c);
+		
+		
+		//Post Code
+		JLabel postCodeLbl = new JLabel("Post Code:");
+		c.ipady = 20;
+		c.weightx = 0.1;
+		c.gridx = 0;
+		c.gridy = 9;
+		c.gridwidth = 1;
+		c.gridheight = 1;
+		c.insets = new Insets(0,0,0,0);
+    	pane.add(postCodeLbl, c);
+		
+		postCodeTxt = new JTextField("");
+		c.ipady = 20;
+		c.weightx = 1.0;
+		c.gridx = 1;
+		c.gridy = 9;
+		c.gridwidth = 2;
+		c.gridheight = 1;
+		c.insets = new Insets(0,0,0,0);
+    	pane.add(postCodeTxt, c);
+		
+		
+		//Telephone No.
+		JLabel phoneNumLbl = new JLabel("Telephone Number: ");
+		c.ipady = 20;
+		c.weightx = 0.1;
+		c.gridx = 0;
+		c.gridy = 10;
+		c.gridwidth = 1;
+		c.gridheight = 1;
+		c.insets = new Insets(0,0,0,0);
+    	pane.add(phoneNumLbl, c);
+		
+		phoneNumTxt = new JTextField("");
+		c.ipady = 20;
+		c.weightx = 1.0;
+		c.gridx = 1;
+		c.gridy = 10;
+		c.gridwidth = 2;
+		c.gridheight = 1;
+		c.insets = new Insets(0,0,0,0);
+    	pane.add(phoneNumTxt, c);
+		
+		
+		//Email Address
+		JLabel emailLbl = new JLabel("Email Address:");
+		c.ipady = 20;
+		c.weightx = 0.1;
+		c.gridx = 0;
+		c.gridy = 11;
+		c.gridwidth = 1;
+		c.gridheight = 1;
+		c.insets = new Insets(0,0,0,0);
+    	pane.add(emailLbl, c);
+		
+		emailTxt = new JTextField("");
+		c.ipady = 20;
+		c.weightx = 1.0;
+		c.gridx = 1;
+		c.gridy = 11;
+		c.gridwidth = 2;
+		c.gridheight = 1;
+		c.insets = new Insets(0,0,0,0);
+    	pane.add(emailTxt, c);
+		
+		
+		//Security Question
+		JLabel secQuestionLbl = new JLabel("Security Question:");
+		c.ipady = 20;
+		c.weightx = 1.0;
+		c.gridx = 0;
+		c.gridy = 12;
+		c.gridwidth = 1;
+		c.gridheight = 1;
+		c.insets = new Insets(0,0,0,0);
+    	pane.add(secQuestionLbl, c);
+		
+		secQuestionCombo = new JComboBox(secQuestionString);
+		//c.ipadx = 100;
+		c.weightx = 0.0;
+		c.gridx = 1;
+		c.gridy = 12;
+		c.gridwidth = 1;
+		c.gridheight = 1;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.insets = new Insets(0,100,0,0);
+    	pane.add(secQuestionCombo, c);
+		
+		
+		//Security Answer
+		JLabel secAnswerLbl = new JLabel("Security Answer:");
+		c.ipady = 20;
+		c.weightx = 0.1;
+		c.gridx = 0;
+		c.gridy = 13;
+		c.gridwidth = 1;
+		c.gridheight = 1;
+		c.insets = new Insets(0,0,0,0);
+    	pane.add(secAnswerLbl, c);
+		
+		secAnswerTxt = new JTextField("");
+		c.ipady = 20;
+		c.weightx = 1.0;
+		c.gridx = 1;
+		c.gridy = 13;
+		c.gridwidth = 2;
+		c.gridheight = 1;
+		c.insets = new Insets(0,0,0,0);
+    	pane.add(secAnswerTxt, c);	
+    		
+    	JButton addCustButton = new JButton("Add Customer");
+	    c.ipady = 20;
+	    c.weightx = 0.0;
+    	c.gridx = 0;
+		c.gridy = 14;
+		c.gridwidth = 1;
+		c.gridheight = 1;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.insets = new Insets(0,0,0,-70);
+    	pane.add(addCustButton, c);   
+    	addCustButton.addActionListener(addCustomerListener); 	
+    		
+    	JButton resetButton = new JButton("Reset");
+	    c.ipady = 20;
+	    c.weightx = 0.0;
+    	c.gridx = 1;
+		c.gridy = 14;
+		c.gridwidth = 1;
+		c.gridheight = 1;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.insets = new Insets(0,70,0,0);
+    	pane.add(resetButton, c);   
+    	resetButton.addActionListener(resetListener); 	
     }
+    
+    
+    public static void createAndShowGUI() {
+        //Create and set up the window. Set instantiation parameters.
+        frame = new JFrame("Joining");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        	
+    	frame.setResizable(false);
+		frame.setLocationRelativeTo(null);
+		frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);			
+ 
+        //Set up the content pane.
+        addComponentsToPane(frame.getContentPane());
+ 
+        //Display the window.
+        frame.pack();
+        frame.setVisible(true);
+    }
+    
     
     //event listeners
     class NavigationListener implements ActionListener
@@ -201,50 +435,61 @@ public class JoiningGUI extends JFrame
 			    	v.pack();
 					v.setSize(300,300);
 			    	
-                    dispose();
+                    frame.dispose();
     			}
-                /*if (e.getActionCommand().equals("Complaints")) {
+                if (e.getActionCommand().equals("Complaints")) {
                     cgui = new ComplaintGUI();
-			    	cgui.pack();
+			    	cgui.createAndShowGUI();
                     
-                    dispose();
-                }*/
+                    frame.dispose();
+                }
                 if (e.getActionCommand().equals("Products")) {
                     pgui = new ProductsGUI();
 			    	pgui.createAndShowGUI();
 
-                    dispose();
+                    frame.dispose();
                 }
                 if (e.getActionCommand().equals("Common Problems")) {
                     pbgui = new ProblemsGUI();
 			    	pbgui.pack();
 			    	
-                    dispose();
+                    frame.dispose();
                 }
+                if (e.getActionCommand().equals("Customer Validation")) 
+            	{
+                	cvgui = new CustValidationGUI();
+					cvgui.createAndShowGUI();
+
+                	frame.dispose();
+            	}
                 if (e.getActionCommand().equals("Customer Details")) {
                     cdgui = new CustDetailsGUI();
 			    	cdgui.createAndShowGUI();
 
-                    dispose();
+                    frame.dispose();
                 }
+                if (e.getActionCommand().equals("Close")) {
+                System.exit(0);
+            	}
     		}
     	}
+    
     	
     class AddCustomerListener implements ActionListener
     	{
     		public void actionPerformed(ActionEvent ev)
     		{
-    			String fNameIn = fNameText.getText();
-		    	String sNameIn = sNameText.getText();
-		    	String houseNumIn = houseNumberText.getText();
-		    	String streetNameIn = streetNameText.getText();
-		    	String cityIn = cityText.getText();
-		    	String countyIn = countyText.getText();
-		    	String postcodeIn = postcodeText.getText();
-		    	String phoneIn = phoneText.getText();
-		    	String emailIn = emailText.getText();
+    			String fNameIn = fNameTxt.getText();
+		    	String sNameIn = sNameTxt.getText();
+		    	String houseNumIn = houseNumTxt.getText();
+		    	String streetNameIn = streetNameTxt.getText();
+		    	String cityIn = cityTxt.getText();
+		    	String countyIn = countyTxt.getText();
+		    	String postcodeIn = postCodeTxt.getText();
+		    	String phoneIn = phoneNumTxt.getText();
+		    	String emailIn = emailTxt.getText();
 		    	String secQuestionIn = (String)secQuestionCombo.getSelectedItem();
-		    	String secAnswerIn = secAnsText.getText();
+		    	String secAnswerIn = secAnswerTxt.getText();
 		    	
 		    	if(("".equals(fNameIn)) || ("".equals(sNameIn))||("".equals(houseNumIn))||("".equals(streetNameIn))||("".equals(cityIn))
 		    		||("".equals(countyIn))||("".equals(postcodeIn))||("".equals(emailIn))||("".equals(secQuestionIn))||("".equals(secAnswerIn)))		    			
@@ -270,32 +515,17 @@ public class JoiningGUI extends JFrame
 					{
 						ex.printStackTrace();
 					}
-					/*finally
-					{
-						if(st!=null)
-						{
-							st.close();
-						}
-					}*/
-			
-			    	
-			        /*System.out.println("Customer added. Name: " + fNameIn + "  " + sNameIn + 
-			        						" Address: " + houseNumIn + " " + streetNameIn + ", " +
-			            				   cityIn + ", " + countyIn + ", " + postcodeIn + 
-			            				   	" Contact Details: " + emailIn + ", " + phoneIn +
-			            				   		" Security Answer: " + secAnswerIn);*/
-			        //System.exit(0);
 			        
-					fNameText.setText("");
-			    	sNameText.setText("");
-			    	houseNumberText.setText("");
-			    	streetNameText.setText("");
-			    	cityText.setText("");
-			    	countyText.setText("");
-			    	postcodeText.setText("");
-			    	phoneText.setText("");
-			    	emailText.setText("");
-			    	secAnsText.setText("");
+					fNameTxt.setText("");
+			    	sNameTxt.setText("");
+			    	houseNumTxt.setText("");
+			    	streetNameTxt.setText("");
+			    	cityTxt.setText("");
+			    	countyTxt.setText("");
+			    	postCodeTxt.setText("");
+			    	phoneNumTxt.setText("");
+			    	emailTxt.setText("");
+			    	secAnswerTxt.setText("");
 		    	}
     		}
     	}
@@ -304,17 +534,17 @@ public class JoiningGUI extends JFrame
     	{
     		public void actionPerformed(ActionEvent ev)
     		{
-				fNameText.setText("");
-		    	sNameText.setText("");
-		    	houseNumberText.setText("");
-		    	streetNameText.setText("");
-		    	cityText.setText("");
-		    	countyText.setText("");
-		    	postcodeText.setText("");
-		    	phoneText.setText("");
-		    	emailText.setText("");
-		    	secAnsText.setText("");
+				fNameTxt.setText("");
+		    	sNameTxt.setText("");
+		    	houseNumTxt.setText("");
+		    	streetNameTxt.setText("");
+		    	cityTxt.setText("");
+		    	countyTxt.setText("");
+		    	postCodeTxt.setText("");
+		    	phoneNumTxt.setText("");
+		    	emailTxt.setText("");
+		    	secAnswerTxt.setText("");
     		}
     	}
-	
+    	
 }

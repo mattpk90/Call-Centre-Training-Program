@@ -1,10 +1,11 @@
 /**
- * @(#)JoiningGUI.java
- *
- *
- * @author 
- * @version 1.00 2011/11/17
- */
+* @(#)Call_Centre_Training.java
+*
+* Call Centre Training Application
+*
+* @authors: Robbie Aftab, Ash Ellis, Steve Glasspool, Matt Kennedy
+*/
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -22,12 +23,11 @@ import java.sql.Blob;
 import java.io.IOException;
 
 
-public class JoiningGUI extends JFrame
+public class JoiningGUI
 {
 	View v;
 	ComplaintGUI cgui;
 	ProductsGUI pgui;
-	ProblemsGUI pbgui;
 	CustDetailsGUI cdgui;
 	CustValidationGUI cvgui;
 	
@@ -51,7 +51,17 @@ public class JoiningGUI extends JFrame
     }
 	
 	public static void addComponentsToPane(Container pane)
-    {      	  	  	
+    {
+    	// Get the default toolkit
+		Toolkit toolkit = Toolkit.getDefaultToolkit();
+
+		// Get the current screen size
+		Dimension scrnsize = toolkit.getScreenSize();
+		double width = (scrnsize.getWidth() / 2) - 150;
+		double height = (scrnsize.getHeight() / 2) - 350;
+    	
+    	frame.setLocation((int)width,(int)height);
+    	
 		//scroll pane
 		JScrollPane complaintScrollPane;
 		JScrollPane readOnlyScrollPane;
@@ -65,10 +75,9 @@ public class JoiningGUI extends JFrame
 		JMenuItem fileClose = new JMenuItem("Close");
 		
 		JMenuItem navHome = new JMenuItem("Home");
-		JMenuItem navValidation = new JMenuItem("Customer Validation");
+		JMenuItem navCustVal = new JMenuItem("Customer Validation");
 		JMenuItem navProducts = new JMenuItem("Products");
 		JMenuItem navComplaints = new JMenuItem("Complaints");
-		JMenuItem navProblems = new JMenuItem("Common Problems");
 		JMenuItem navCustDetails = new JMenuItem("Customer Details");
 		
 		JMenuItem helpFAQ = new JMenuItem("FAQ");
@@ -92,18 +101,16 @@ public class JoiningGUI extends JFrame
     	
     	//nav menu
     	pageNav.add(navHome);
-    	pageNav.add(navValidation);
+    	pageNav.add(navCustVal);
     	pageNav.add(navProducts);
     	pageNav.add(navComplaints);
-    	pageNav.add(navProblems);
     	pageNav.add(navCustDetails);
     	
     	fileClose.addActionListener(navigationListener);
     	navHome.addActionListener(navigationListener);
-    	navValidation.addActionListener(navigationListener);
+    	navCustVal.addActionListener(navigationListener);
     	navProducts.addActionListener(navigationListener);
     	navComplaints.addActionListener(navigationListener);
-    	navProblems.addActionListener(navigationListener);
     	navCustDetails.addActionListener(navigationListener);
     	
     	//help menu
@@ -147,7 +154,7 @@ public class JoiningGUI extends JFrame
 		c.gridy = 3;
 		c.gridwidth = 1;
 		c.gridheight = 1;
-		c.insets = new Insets(0,0,0,0);
+		c.insets = new Insets(0,10,0,10);
     	pane.add(fNameLbl, c);
 		
 		fNameTxt = new JTextField("");
@@ -169,7 +176,7 @@ public class JoiningGUI extends JFrame
 		c.gridy = 4;
 		c.gridwidth = 1;
 		c.gridheight = 1;
-		c.insets = new Insets(0,0,0,0);
+		c.insets = new Insets(0,10,0,0);
     	pane.add(sNameLbl, c);
 		
 		sNameTxt = new JTextField("");
@@ -191,7 +198,7 @@ public class JoiningGUI extends JFrame
 		c.gridy = 5;
 		c.gridwidth = 1;
 		c.gridheight = 1;
-		c.insets = new Insets(0,0,0,0);
+		c.insets = new Insets(0,10,0,0);
     	pane.add(houseNumLbl, c);
 		
 		houseNumTxt = new JTextField("");
@@ -213,7 +220,7 @@ public class JoiningGUI extends JFrame
 		c.gridy = 6;
 		c.gridwidth = 1;
 		c.gridheight = 1;
-		c.insets = new Insets(0,0,0,0);
+		c.insets = new Insets(0,10,0,0);
     	pane.add(streetNameLbl, c);
 		
 		streetNameTxt = new JTextField("");
@@ -235,7 +242,7 @@ public class JoiningGUI extends JFrame
 		c.gridy = 7;
 		c.gridwidth = 1;
 		c.gridheight = 1;
-		c.insets = new Insets(0,0,0,0);
+		c.insets = new Insets(0,10,0,0);
     	pane.add(cityLbl, c);
 		
 		cityTxt = new JTextField("");
@@ -257,7 +264,7 @@ public class JoiningGUI extends JFrame
 		c.gridy = 8;
 		c.gridwidth = 1;
 		c.gridheight = 1;
-		c.insets = new Insets(0,0,0,0);
+		c.insets = new Insets(0,10,0,0);
     	pane.add(countyLbl, c);
 		
 		countyTxt = new JTextField("");
@@ -279,7 +286,7 @@ public class JoiningGUI extends JFrame
 		c.gridy = 9;
 		c.gridwidth = 1;
 		c.gridheight = 1;
-		c.insets = new Insets(0,0,0,0);
+		c.insets = new Insets(0,10,0,0);
     	pane.add(postCodeLbl, c);
 		
 		postCodeTxt = new JTextField("");
@@ -301,7 +308,7 @@ public class JoiningGUI extends JFrame
 		c.gridy = 10;
 		c.gridwidth = 1;
 		c.gridheight = 1;
-		c.insets = new Insets(0,0,0,0);
+		c.insets = new Insets(0,10,0,10);
     	pane.add(phoneNumLbl, c);
 		
 		phoneNumTxt = new JTextField("");
@@ -323,7 +330,7 @@ public class JoiningGUI extends JFrame
 		c.gridy = 11;
 		c.gridwidth = 1;
 		c.gridheight = 1;
-		c.insets = new Insets(0,0,0,0);
+		c.insets = new Insets(0,10,0,0);
     	pane.add(emailLbl, c);
 		
 		emailTxt = new JTextField("");
@@ -345,7 +352,7 @@ public class JoiningGUI extends JFrame
 		c.gridy = 12;
 		c.gridwidth = 1;
 		c.gridheight = 1;
-		c.insets = new Insets(0,0,0,0);
+		c.insets = new Insets(0,10,0,0);
     	pane.add(secQuestionLbl, c);
 		
 		secQuestionCombo = new JComboBox(secQuestionString);
@@ -356,7 +363,7 @@ public class JoiningGUI extends JFrame
 		c.gridwidth = 1;
 		c.gridheight = 1;
 		c.fill = GridBagConstraints.HORIZONTAL;
-		c.insets = new Insets(0,100,0,0);
+		c.insets = new Insets(0,0,0,0);
     	pane.add(secQuestionCombo, c);
 		
 		
@@ -368,7 +375,7 @@ public class JoiningGUI extends JFrame
 		c.gridy = 13;
 		c.gridwidth = 1;
 		c.gridheight = 1;
-		c.insets = new Insets(0,0,0,0);
+		c.insets = new Insets(0,10,0,0);
     	pane.add(secAnswerLbl, c);
 		
 		secAnswerTxt = new JTextField("");
@@ -389,7 +396,7 @@ public class JoiningGUI extends JFrame
 		c.gridwidth = 1;
 		c.gridheight = 1;
 		c.fill = GridBagConstraints.HORIZONTAL;
-		c.insets = new Insets(0,0,0,-70);
+		c.insets = new Insets(0,0,0,0);
     	pane.add(addCustButton, c);   
     	addCustButton.addActionListener(addCustomerListener); 	
     		
@@ -401,13 +408,13 @@ public class JoiningGUI extends JFrame
 		c.gridwidth = 1;
 		c.gridheight = 1;
 		c.fill = GridBagConstraints.HORIZONTAL;
-		c.insets = new Insets(0,70,0,0);
+		c.insets = new Insets(0,0,0,0);
     	pane.add(resetButton, c);   
     	resetButton.addActionListener(resetListener); 	
     }
-    
-    
-    public static void createAndShowGUI() {
+     
+    public static void createAndShowGUI()
+    {
         //Create and set up the window. Set instantiation parameters.
         frame = new JFrame("Joining");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -427,113 +434,104 @@ public class JoiningGUI extends JFrame
     
     //event listeners
     class NavigationListener implements ActionListener
-    	{
-    		public void actionPerformed(ActionEvent e)
-    		{
-    			if (e.getActionCommand().equals("Home")) {                     
-                    v = new View();	
-			    	v.pack();
-					v.setSize(300,300);
-			    	
-                    frame.dispose();
-    			}
-                if (e.getActionCommand().equals("Complaints")) {
-                    cgui = new ComplaintGUI();
-			    	cgui.createAndShowGUI();
-                    
-                    frame.dispose();
-                }
-                if (e.getActionCommand().equals("Products")) {
-                    pgui = new ProductsGUI();
-			    	pgui.createAndShowGUI();
-
-                    frame.dispose();
-                }
-                if (e.getActionCommand().equals("Common Problems")) {
-                    pbgui = new ProblemsGUI();
-			    	pbgui.pack();
-			    	
-                    frame.dispose();
-                }
-                if (e.getActionCommand().equals("Customer Validation")) 
-            	{
-                	cvgui = new CustValidationGUI();
-					cvgui.createAndShowGUI();
-
-                	frame.dispose();
-            	}
-                if (e.getActionCommand().equals("Customer Details")) {
-                    cdgui = new CustDetailsGUI();
-			    	cdgui.createAndShowGUI();
-
-                    frame.dispose();
-                }
-                if (e.getActionCommand().equals("Close")) {
-                System.exit(0);
-            	}
-    		}
-    	}
-    
-    	
-    class AddCustomerListener implements ActionListener
-    	{
-    		public void actionPerformed(ActionEvent ev)
-    		{
-    			String fNameIn = fNameTxt.getText();
-		    	String sNameIn = sNameTxt.getText();
-		    	String houseNumIn = houseNumTxt.getText();
-		    	String streetNameIn = streetNameTxt.getText();
-		    	String cityIn = cityTxt.getText();
-		    	String countyIn = countyTxt.getText();
-		    	String postcodeIn = postCodeTxt.getText();
-		    	String phoneIn = phoneNumTxt.getText();
-		    	String emailIn = emailTxt.getText();
-		    	String secQuestionIn = (String)secQuestionCombo.getSelectedItem();
-		    	String secAnswerIn = secAnswerTxt.getText();
-		    	
-		    	if(("".equals(fNameIn)) || ("".equals(sNameIn))||("".equals(houseNumIn))||("".equals(streetNameIn))||("".equals(cityIn))
-		    		||("".equals(countyIn))||("".equals(postcodeIn))||("".equals(emailIn))||("".equals(secQuestionIn))||("".equals(secAnswerIn)))		    			
-		    	{
-		    		JOptionPane.showMessageDialog(null,"No blank fields allowed!");
-		    	}
-		    	else
-		    	{
-			    	//Database insert
-			    	Connection connection = View.getConnection();
-					Statement st = null;
-					ResultSet rs = null;
-					
-					try
-					{
-						st = connection.createStatement();
-						String joiningSql = "INSERT INTO customer (fName,sName,houseNo,streetName,city,county,postCode,telNo,email,secQues,secAns) VALUES ('" + fNameIn + "','" + sNameIn + "','" + houseNumIn + "','" + streetNameIn +"','" + cityIn +"','" + countyIn + "','" + postcodeIn + "','" + phoneIn + "','" + emailIn + "','" + secQuestionIn + "','" + secAnswerIn + "')";
-						st.executeUpdate(joiningSql);
-						JOptionPane.showMessageDialog(null,"Customer added!");
+    {
+		public void actionPerformed(ActionEvent e)
+		{
+			if (e.getActionCommand().equals("Home")) {                     
+                v = new View();	
+		    	v.createAndShowGUI();			    	
+                frame.dispose();
+			}
+            if (e.getActionCommand().equals("Complaints")) {
+                cgui = new ComplaintGUI();
+		    	cgui.createAndShowGUI();                
+                frame.dispose();
+            }
+            if (e.getActionCommand().equals("Products")) {
+                pgui = new ProductsGUI();
+		    	pgui.createAndShowGUI();
+                frame.dispose();
+            }
+            if (e.getActionCommand().equals("Customer Validation")) 
+        	{
+            	cvgui = new CustValidationGUI();
+				cvgui.createAndShowGUI();
+            	frame.dispose();
+        	}
+            if (e.getActionCommand().equals("Customer Details")) {
+                cdgui = new CustDetailsGUI();
+		    	cdgui.createAndShowGUI();
+                frame.dispose();
+            }
+            if (e.getActionCommand().equals("Close")) {
+            System.exit(0);
+        	}
+		}
+	}
 	
-					}
-					catch(SQLException ex)
-					{
-						ex.printStackTrace();
-					}
-			        
-					fNameTxt.setText("");
-			    	sNameTxt.setText("");
-			    	houseNumTxt.setText("");
-			    	streetNameTxt.setText("");
-			    	cityTxt.setText("");
-			    	countyTxt.setText("");
-			    	postCodeTxt.setText("");
-			    	phoneNumTxt.setText("");
-			    	emailTxt.setText("");
-			    	secAnswerTxt.setText("");
-		    	}
-    		}
-    	}
-    	
-    	class ResetListener implements ActionListener
+	static public boolean numericVal(String str)
+	{    
+        if (str == null || str.length() == 0)
+            return false;
+                  
+        for (int i = 0; i < str.length(); i++)
+        {
+            //If we find a non-digit character we return false.
+            if (!Character.isDigit(str.charAt(i)))
+                return false;
+        }    
+        return true;
+    }
+    
+    class AddCustomerListener implements ActionListener
+    {
+    	public void actionPerformed(ActionEvent ev)
     	{
-    		public void actionPerformed(ActionEvent ev)
-    		{
+			String fNameIn = fNameTxt.getText();
+	    	String sNameIn = sNameTxt.getText();
+	    	String houseNumIn = houseNumTxt.getText();
+	    	String streetNameIn = streetNameTxt.getText();
+	    	String cityIn = cityTxt.getText();
+	    	String countyIn = countyTxt.getText();
+	    	String postcodeIn = postCodeTxt.getText();
+	    	String phoneIn = phoneNumTxt.getText();
+	    	String emailIn = emailTxt.getText();
+	    	String secQuestionIn = (String)secQuestionCombo.getSelectedItem();
+	    	String secAnswerIn = secAnswerTxt.getText();
+	    	
+	    	boolean testFNameIn = JoiningGUI.numericVal(fNameIn);
+	    	boolean testSNameIn = JoiningGUI.numericVal(sNameIn);
+	    	boolean testphoneIn = JoiningGUI.numericVal(phoneIn);
+	    	
+	    	if(("".equals(fNameIn)) || ("".equals(sNameIn))||("".equals(houseNumIn))||("".equals(streetNameIn))||("".equals(cityIn))
+	    		||("".equals(countyIn))||("".equals(postcodeIn))||("".equals(emailIn))||("".equals(secQuestionIn))||("".equals(secAnswerIn)))		    			
+	    	{
+	    		JOptionPane.showMessageDialog(null,"No blank fields allowed!");
+	    	}
+	    	else if((testFNameIn == false) || (testSNameIn == false) || (testphoneIn ==true))
+	    	{
+	    		JOptionPane.showMessageDialog(null,"First and last name can contain only letters, phone number can contain only numbers.");
+	    	}
+	    	else
+	    	{
+		    	//Database insert
+		    	Connection connection = View.getConnection();
+				Statement st = null;
+				ResultSet rs = null;
+				
+				try
+				{
+					st = connection.createStatement();
+					String joiningSql = "INSERT INTO customer (fName,sName,houseNo,streetName,city,county,postCode,telNo,email,secQues,secAns) VALUES ('" + fNameIn + "','" + sNameIn + "','" + houseNumIn + "','" + streetNameIn + "','" + cityIn + "','" + countyIn + "','" + postcodeIn + "','" + phoneIn + "','" + emailIn + "','" + secQuestionIn + "','" + secAnswerIn + "')";
+					st.executeUpdate(joiningSql);
+					JOptionPane.showMessageDialog(null,"Customer added!");
+
+				}
+				catch(SQLException ex)
+				{
+					ex.printStackTrace();
+				}
+		        
 				fNameTxt.setText("");
 		    	sNameTxt.setText("");
 		    	houseNumTxt.setText("");
@@ -544,7 +542,24 @@ public class JoiningGUI extends JFrame
 		    	phoneNumTxt.setText("");
 		    	emailTxt.setText("");
 		    	secAnswerTxt.setText("");
-    		}
+	    	}
     	}
+    }
     	
+   	class ResetListener implements ActionListener
+    {
+    	public void actionPerformed(ActionEvent ev)
+    	{
+			fNameTxt.setText("");
+	    	sNameTxt.setText("");
+	    	houseNumTxt.setText("");
+	    	streetNameTxt.setText("");
+	    	cityTxt.setText("");
+	    	countyTxt.setText("");
+	    	postCodeTxt.setText("");
+	    	phoneNumTxt.setText("");
+	    	emailTxt.setText("");
+	    	secAnswerTxt.setText("");
+    	}
+    }	
 }

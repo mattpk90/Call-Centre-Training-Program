@@ -1,10 +1,11 @@
 /**
- * @(#)ComplaintGUI.java
- *
- *
- * @author 
- * @version 1.00 2011/11/17
- */
+* @(#)Call_Centre_Training.java
+*
+* Call Centre Training Application
+*
+* @authors: Robbie Aftab, Ash Ellis, Steve Glasspool, Matt Kennedy
+*/
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -26,12 +27,11 @@ import java.text.SimpleDateFormat;
 
 
 public class ComplaintGUI
-{	
+{
 	//page objects
 	View v;
 	ProductsGUI pgui;
 	JoiningGUI jgui;
-	ProblemsGUI pbgui;
 	CustDetailsGUI cdgui;
 	CustValidationGUI cvgui;
 	
@@ -43,10 +43,10 @@ public class ComplaintGUI
 	static JMenuBar menuBar;
 	static JTextArea readOnlyTextArea, complaintTextArea;
 	static JTextField custIdTxt;
+	static JComboBox problemTypeCombo;
+	static JButton fetchCustHistButton, newComplButton;
 	
-	final static boolean shouldFill = true;
-    final static boolean shouldWeightX = true;
-    final static boolean RIGHT_TO_LEFT = false;
+	static String[] problemTypeString = {"Product faulty", "Engineer missed call out", "Poor service", "Wants to speak to a manager", "Other"};
 	
     public ComplaintGUI()
     { 	   	
@@ -58,14 +58,18 @@ public class ComplaintGUI
     }
     
     
-    public static void addComponentsToPane(Container pane)
+    public static void addComponentsToPane(Container pane)   	
     {      	  	  	
-    	/*if (RIGHT_TO_LEFT)
-    	{
-            pane.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
-        }*/
- 
-		
+    	// Get the default toolkit
+		Toolkit toolkit = Toolkit.getDefaultToolkit();
+
+		// Get the current screen size
+		Dimension scrnsize = toolkit.getScreenSize();
+		double width = (scrnsize.getWidth() / 2) - 150;
+		double height = (scrnsize.getHeight() / 2) - 350;
+    	
+    	frame.setLocation((int)width,(int)height);
+    	
 		//scroll pane
 		JScrollPane complaintScrollPane;
 		JScrollPane readOnlyScrollPane;
@@ -82,7 +86,6 @@ public class ComplaintGUI
 		JMenuItem navValidation = new JMenuItem("Customer Validation");
 		JMenuItem navProducts = new JMenuItem("Products");
 		JMenuItem navJoining = new JMenuItem("Joining");
-		JMenuItem navProblems = new JMenuItem("Common Problems");
 		JMenuItem navCustDetails = new JMenuItem("Customer Details");
 		
 		JMenuItem helpFAQ = new JMenuItem("FAQ");
@@ -91,13 +94,7 @@ public class ComplaintGUI
 
 	    pane.setLayout(new GridBagLayout());
 	    GridBagConstraints c = new GridBagConstraints();
-	    
-	    if (shouldFill)
-	    {	//maximum height, maximum width
-	    	c.fill = GridBagConstraints.VERTICAL;		    
-		    c.fill = GridBagConstraints.HORIZONTAL;
-	    }
-	    	    
+	     
 	    
 		//menu bar
 		menuBar = new JMenuBar();
@@ -115,7 +112,6 @@ public class ComplaintGUI
     	pageNav.add(navValidation);
     	pageNav.add(navProducts);
     	pageNav.add(navJoining);
-    	pageNav.add(navProblems);
     	pageNav.add(navCustDetails);
     	
     	fileClose.addActionListener(navigationListener);
@@ -123,7 +119,6 @@ public class ComplaintGUI
     	navValidation.addActionListener(navigationListener);
     	navProducts.addActionListener(navigationListener);
     	navJoining.addActionListener(navigationListener);
-    	navProblems.addActionListener(navigationListener);
     	navCustDetails.addActionListener(navigationListener);
     	
     	//help menu
@@ -139,6 +134,7 @@ public class ComplaintGUI
 		c.gridy = 0;
 		c.gridwidth = 0;
 		c.gridheight = 1;
+		c.fill = GridBagConstraints.HORIZONTAL;
     	pane.add(menuBar, c);
     	//c.insets = new Insets(0,0,0,0);
     	//menuBar.addActionListener(navigationListener); 
@@ -149,9 +145,9 @@ public class ComplaintGUI
 	    c.weightx = 0.0;
     	c.gridx = 0;
 		c.gridy = 1;
-		c.gridwidth = 1;
+		c.gridwidth = 0;
 		c.gridheight = 1;
-		//c.fill = GridBagConstraints.HORIZONTAL;
+		c.fill = GridBagConstraints.HORIZONTAL;
 		//c.insets = new Insets(0,0,0,0);
     	pane.add(homeComplButton, c);   
     	homeComplButton.addActionListener(navigationListener); 	
@@ -183,7 +179,7 @@ public class ComplaintGUI
 		//newComplButton.addActionListener(navigationListener);
 
 		
-		JButton fetchCustHistButton = new JButton("Fetch Complaint History");
+		fetchCustHistButton = new JButton("Fetch Complaint History");
 		//c.ipady = 20;
 		c.weightx = 0.0;
 		c.gridx = 2;
@@ -246,26 +242,46 @@ public class ComplaintGUI
 		c.gridheight = 1;
 		c.insets = new Insets(0,0,0,0);
 		pane.add(complaintScrollPane, c);
-		//textArea.getDocument().addDocumentListener(this);
+		//textArea.getDocument().addDocumentListener(this);		
 		
+		JLabel problemLbl = new JLabel("Select problem type:");
+		c.ipady = 20;
+		c.weightx = 1.0;
+		c.gridx = 0;
+		c.gridy = 5;
+		c.gridwidth = 2;
+		c.gridheight = 1;
+		c.insets = new Insets(0,0,0,0);
+    	pane.add(problemLbl, c);		
+				
+		problemTypeCombo = new JComboBox(problemTypeString);
+		c.weightx = 0.0;
+		c.gridx = 1;
+		c.gridy = 5;
+		c.gridwidth = 2;
+		c.gridheight = 1;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.insets = new Insets(0,35,0,0);
+    	pane.add(problemTypeCombo, c);		
 		
-		JButton newComplButton = new JButton("Add Complaint");
+		newComplButton = new JButton("Add Complaint");
 		//c.ipady = 20;
 		//c.weightx = 1;
 		c.gridx = 0;
-		c.gridy = 5;
+		c.gridy = 6;
 		c.gridwidth = 3;
 		c.gridheight = 1;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.insets = new Insets(0,0,0,0);
     	pane.add(newComplButton, c);
 		newComplButton.addActionListener(addComplaintListener);
-
+		newComplButton.setEnabled(false);
 		
     }
     
     
-    public static void createAndShowGUI() {
+    public static void createAndShowGUI()
+    {
         //Create and set up the window. Set instantiation parameters.
         frame = new JFrame("Complaints");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -280,76 +296,78 @@ public class ComplaintGUI
         //Display the window.
         frame.pack();
         frame.setVisible(true);
-        
-        //fetchCustHistButton.addActionListener(fetchCustHistListener);	
     }
     
     
     //event listeners
-     class NavigationListener implements ActionListener
-    	{
-    		public void actionPerformed(ActionEvent e)
-    		{
-    			if (e.getActionCommand().equals("Home")) {                     
-                    v = new View();	
-			    	v.pack();
-					v.setSize(300,300);
-			    	
-                    frame.dispose();
-    			}
-                if (e.getActionCommand().equals("Products")) {
-                    pgui = new ProductsGUI();
-			    	pgui.createAndShowGUI();
-			    	
-                    frame.dispose();
-                }
-                if (e.getActionCommand().equals("Joining")) {
-                    jgui = new JoiningGUI();
-			    	jgui.createAndShowGUI();
-			    	
-                    frame.dispose();
-                }
-                if (e.getActionCommand().equals("Common Problems")) {
-                    pbgui = new ProblemsGUI();
-			    	pbgui.pack();
-
-                    frame.dispose();
-                }
-                if (e.getActionCommand().equals("Customer Details")) {
-                    cdgui = new CustDetailsGUI();
-			    	cdgui.createAndShowGUI();
-
-                    frame.dispose();
-                }
-                if (e.getActionCommand().equals("Customer Validation")) 
-            	{
-                	cvgui = new CustValidationGUI();
-					cvgui.createAndShowGUI();
-
-                	frame.dispose();
-            	}
-                if (e.getActionCommand().equals("Close")) {
-                    System.exit(0);
-                }
-    		}
-    	}
+    class NavigationListener implements ActionListener
+    {
+		public void actionPerformed(ActionEvent e)
+		{
+			if (e.getActionCommand().equals("Home")) {                     
+                v = new View();	
+		    	v.createAndShowGUI();		    	
+                frame.dispose();
+			}
+            if (e.getActionCommand().equals("Products")) {
+                pgui = new ProductsGUI();
+		    	pgui.createAndShowGUI();			    	
+                frame.dispose();
+            }
+            if (e.getActionCommand().equals("Joining")) {
+                jgui = new JoiningGUI();
+		    	jgui.createAndShowGUI();		    	
+                frame.dispose();
+            }
+            if (e.getActionCommand().equals("Customer Details")) {
+                cdgui = new CustDetailsGUI();
+		    	cdgui.createAndShowGUI();
+                frame.dispose();
+            }
+            if (e.getActionCommand().equals("Customer Validation")) 
+        	{
+            	cvgui = new CustValidationGUI();
+				cvgui.createAndShowGUI();
+            	frame.dispose();
+        	}
+            if (e.getActionCommand().equals("Close")) {
+                System.exit(0);
+            }
+		}
+   }
     	
    
-	class FetchCustHistListener implements ActionListener
+	public class FetchCustHistListener implements ActionListener
 	{
 		public void actionPerformed(ActionEvent ev)
-		{
-		
+		{		
 			String custId = custIdTxt.getText();
 			Connection connection = View.getConnection();
 			Statement st = null;
 			ResultSet rs = null;
+			ResultSet rs2 = null;
+			String S = "";
+
 			
 			String previousHistory = "";
+			if(("".equals(custId)) )
+    		{
+    			JOptionPane.showMessageDialog(null,"Please enter a customer ID","Validation Warning",JOptionPane.WARNING_MESSAGE);
+    		}
+    		else
 			try
 			{
 				st = connection.createStatement();
-				rs = st.executeQuery("SELECT DATE_FORMAT(dateTime, '%W %D %M %Y %H:%i') AS dateTime, complaint FROM complaints WHERE cust_id =" + custId + ";");
+								
+				rs2 = st.executeQuery("SELECT status FROM customer WHERE cust_id =" + custId + ";");
+				rs2.first();
+				S = rs2.getString("status");
+				if (S.equals("1"))
+				{
+					JOptionPane.showMessageDialog(null,"You are viewing an account that has been closed!");
+					rs2.next();
+				}
+				rs = st.executeQuery("SELECT DATE_FORMAT(dateTime, '%W %D %M %Y %H:%i') AS dateTime, complaint, problemType FROM complaints WHERE cust_id =" + custId + ";");
 
 				boolean found = rs.next();
 				
@@ -367,16 +385,18 @@ public class ComplaintGUI
 					rs.first();
 					for(int i = 0;i < (recordCount +1); i++)
 					{
-						previousHistory += rs.getString(1) + "\n" + rs.getString(2) + "\n\n";
+						previousHistory += rs.getString(1) + "\n" + rs.getString(3) + "\n" + rs.getString(2) + "\n\n";
 						rs.next();
 					}
 					readOnlyTextArea.setText(previousHistory);
+					custIdTxt.setEnabled(false);	
+					fetchCustHistButton.setEnabled(false);
+					newComplButton.setEnabled(true);
 				}
 			}
 			catch(SQLException ex)
 			{
-				readOnlyTextArea.setText("Please Enter Customer ID.");
-				ex.printStackTrace();
+				JOptionPane.showMessageDialog(null,"Cannot find customer with that ID","Validation Warning",JOptionPane.WARNING_MESSAGE);
 			}
 		
 		}
@@ -387,6 +407,7 @@ public class ComplaintGUI
 		public void actionPerformed(ActionEvent ev)
 		{
 			String complaintIn = complaintTextArea.getText();
+			String problemTypeIn = (String)problemTypeCombo.getSelectedItem();
 			String previousComplaint = readOnlyTextArea.getText();
 			String custId = custIdTxt.getText();
 	    	//System.out.println("Cust ID:" + custId);
@@ -402,7 +423,7 @@ public class ComplaintGUI
 				try
 				{
 					st = connection.createStatement();
-					String complaintSql = "INSERT INTO complaints (cust_id, dateTime, complaint) VALUES (" + custId + ",'" + dateNow + "','" + complaintIn + "')"; 
+					String complaintSql = "INSERT INTO complaints (cust_id, dateTime, complaint, problemType) VALUES (" + custId + ",'" + dateNow + "','" + complaintIn + "','" + problemTypeIn + "')"; 
 					st.executeUpdate(complaintSql);
 					JOptionPane.showMessageDialog(null,"Complaint added!");
 				}
@@ -411,26 +432,60 @@ public class ComplaintGUI
 					readOnlyTextArea.setText("Please Enter Customer ID.");
 					ex.printStackTrace();
 				}
-	    	
-		}
-		
-	
-	}
-	
-	  class ComplaintFocusListener implements FocusListener
-     {
-     	public void focusGained(FocusEvent e)
-     	{
-			complaintTextArea.setText("");
-     	}
-        public void focusLost(FocusEvent e) 
-        {
-       		 
-    	}
-     	
-     	
-     }
 				
+			String custId2 = custIdTxt.getText();
+			Connection connection2 = View.getConnection();
+			Statement st2 = null;
+			ResultSet rs2 = null;
+			
+			String previousHistory2 = "";
+			try
+			{
+				st2 = connection.createStatement();
+				rs2 = st2.executeQuery("SELECT DATE_FORMAT(dateTime, '%W %D %M %Y %H:%i') AS dateTime, complaint, problemType FROM complaints WHERE cust_id =" + custId2 + ";");
+
+				boolean found2 = rs2.next();
+				
+				if (!found2)
+				{
+					readOnlyTextArea.setText("No Existing Complaint");
+				}
+				else
+				{
+					int recordCount2 = 0;
+					while(rs2.next())
+					{
+						recordCount2++;
+					}
+					rs2.first();
+					for(int i = 0;i < (recordCount2 +1); i++)
+					{
+						previousHistory2 += rs2.getString(1) + "\n" + rs2.getString(3) + "\n" + rs2.getString(2) + "\n\n";
+						rs2.next();
+					}
+					readOnlyTextArea.setText(previousHistory2);				
+				}
+			}
+			catch(SQLException ex)
+			{
+				readOnlyTextArea.setText("Please Enter Customer ID.");
+				ex.printStackTrace();
+			}			
+			complaintTextArea.setText("");
+		}
+	}
+		
+
+	class ComplaintFocusListener implements FocusListener
+    {
+		public void focusGained(FocusEvent e)
+		{
+			complaintTextArea.setText("");
+		}
+		public void focusLost(FocusEvent e) 
+		{			 
+		}	
+    }				
 }
 	     
      

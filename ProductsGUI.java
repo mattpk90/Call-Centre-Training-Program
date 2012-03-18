@@ -1,10 +1,11 @@
 /**
- * @(#)ProductsGUI.java
- *
- *
- * @author 
- * @version 1.00 2011/11/17
- */
+* @(#)Call_Centre_Training.java
+*
+* Call Centre Training Application
+*
+* @authors: Robbie Aftab, Ash Ellis, Steve Glasspool, Matt Kennedy
+*/
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -28,11 +29,7 @@ public class ProductsGUI
 {
 	static JFrame frame;
 	static JMenuBar menuBar;
-	static JButton fetchCustHistButton;
-	
-	final static boolean shouldFill = true;
-    final static boolean shouldWeightX = true;
-    final static boolean RIGHT_TO_LEFT = false;
+	static JButton fetchCustHistButton, newComplButton;
     
     static JTextArea readOnlyTextArea, discussTextArea;
     static JTextField custIdTxt, fNameTxt, sNameTxt, houseNumTxt, streetNameTxt, cityTxt, countyTxt, postCodeTxt, phoneNumTxt, emailTxt;
@@ -42,17 +39,13 @@ public class ProductsGUI
     static FetchCustListener fetchCustListener;  
     static AddDiscussionListener addDiscussionListener; 
     static ProductDescListener productDescListener;
-    	
-    
-    
 	
 	View v;
 	ComplaintGUI cgui;
 	CustDetailsGUI cdgui;
 	JoiningGUI jgui;
-	ProblemsGUI pbgui;
 	ProductDescGUI p;
-
+	CustValidationGUI cvgui;
 
 	
 	public ProductsGUI()
@@ -65,12 +58,17 @@ public class ProductsGUI
     }
     
     public static void addComponentsToPane(Container pane)
-    {      	  	  	
-    	/*if (RIGHT_TO_LEFT)
-    	{
-            pane.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
-        }*/
- 
+    {      	  	  			
+		// Get the default toolkit
+		Toolkit toolkit = Toolkit.getDefaultToolkit();
+		
+		// Get the current screen size
+		Dimension scrnsize = toolkit.getScreenSize();
+		double width = (scrnsize.getWidth() / 2) - 400;
+		double height = (scrnsize.getHeight() / 2) - 400;
+		
+		frame.setLocation((int)width,(int)height);
+		
 		
 		//scroll pane
 		JScrollPane discussScrollPane;
@@ -85,82 +83,77 @@ public class ProductsGUI
 		JMenuItem fileClose = new JMenuItem("Close");
 		
 		JMenuItem navHome = new JMenuItem("Home");
+		JMenuItem navCustVal = new JMenuItem("Customer Validation");
 		JMenuItem navComplaints = new JMenuItem("Complaints");
 		JMenuItem navJoining = new JMenuItem("Joining");
-		JMenuItem navProblems = new JMenuItem("Common Problems");
 		JMenuItem navCustDetails = new JMenuItem("Customer Details");
 		
 		JMenuItem helpFAQ = new JMenuItem("FAQ");
 		JMenuItem helpGuide = new JMenuItem("System guide");
 		JMenuItem helpSearch = new JMenuItem("Search");
-
-	    pane.setLayout(new GridBagLayout());
-	    GridBagConstraints c = new GridBagConstraints();
-	    
-	    if (shouldFill)
-	    {	//maximum height, maximum width
-	    	c.fill = GridBagConstraints.VERTICAL;		    
-		    c.fill = GridBagConstraints.HORIZONTAL;
-	    }
-	    	    
-	    
+		
+		pane.setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		
+		
 		//menu bar
 		menuBar = new JMenuBar();
 		pane.add(menuBar);
 		//pane.setJMenuBar(menuBar);
-    	menuBar.add(fileMenu);
-    	menuBar.add(pageNav);
-    	menuBar.add(fileHelpMenu);
+		menuBar.add(fileMenu);
+		menuBar.add(pageNav);
+		menuBar.add(fileHelpMenu);
 		
 		//file menu
-    	fileMenu.add(fileClose);
-    	
-    	//nav menu
-    	pageNav.add(navHome);
-    	pageNav.add(navComplaints);
-    	pageNav.add(navJoining);
-    	pageNav.add(navProblems);
-    	pageNav.add(navCustDetails);
-    	
-    	fileClose.addActionListener(navigationListener);
-    	navHome.addActionListener(navigationListener);
-    	navComplaints.addActionListener(navigationListener);
-    	navJoining.addActionListener(navigationListener);
-    	navProblems.addActionListener(navigationListener);
-    	navCustDetails.addActionListener(navigationListener);
-    	
-    	//help menu
-    	fileHelpMenu.add(helpFAQ);
-    	fileHelpMenu.add(helpGuide);
-    	fileHelpMenu.add(helpSearch); 
-    	
-    	
-    	//add menu
-    	c.ipady = 15;
-	    c.weightx = 0.5;
-    	c.gridy = 0;
+		fileMenu.add(fileClose);
+		
+		//nav menu
+		pageNav.add(navHome);
+		pageNav.add(navCustVal);
+		pageNav.add(navComplaints);
+		pageNav.add(navJoining);
+		pageNav.add(navCustDetails);
+		
+		fileClose.addActionListener(navigationListener);
+		navHome.addActionListener(navigationListener);
+		navCustVal.addActionListener(navigationListener);
+		navComplaints.addActionListener(navigationListener);
+		navJoining.addActionListener(navigationListener);
+		navCustDetails.addActionListener(navigationListener);
+		
+		//help menu
+		fileHelpMenu.add(helpFAQ);
+		fileHelpMenu.add(helpGuide);
+		fileHelpMenu.add(helpSearch); 
+		
+		
+		//add menu
+		c.ipady = 15;
+		c.weightx = 0.5;
+		c.gridy = 0;
 		c.gridx = 0;
 		c.gridwidth = 0;
 		c.gridheight = 1;
-    	pane.add(menuBar, c);
-    	//c.insets = new Insets(0,0,0,0);
-    	//menuBar.addActionListener(navigationListener); 
-    	
-	 	//add buttons
-    	JButton homeComplButton = new JButton("Home");
-	    c.ipady = 20;
-	    c.weightx = 0.0;
-    	c.gridy = 1;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		pane.add(menuBar, c);
+		//c.insets = new Insets(0,0,0,0);
+		//menuBar.addActionListener(navigationListener); 
+		
+		//add buttons
+		JButton homeComplButton = new JButton("Home");
+		c.ipady = 20;
+		c.weightx = 0.0;
+		c.gridy = 1;
 		c.gridx = 0;
 		c.gridwidth = 6;
 		c.gridheight = 1;
 		//c.fill = GridBagConstraints.HORIZONTAL;
 		c.insets = new Insets(0,0,10,0);
-    	pane.add(homeComplButton, c);   
-    	homeComplButton.addActionListener(navigationListener); 	
-    	
-    	
-    	JLabel custIdLbl = new JLabel("Customer ID:");
+		pane.add(homeComplButton, c);   
+		homeComplButton.addActionListener(navigationListener); 	
+		
+		
+		JLabel custIdLbl = new JLabel("Customer ID:");
 		c.ipady = 20;
 		c.weightx = 0.1;
 		c.gridy = 2;
@@ -169,8 +162,8 @@ public class ProductsGUI
 		c.gridheight = 1;
 		//c.fill = GridBagConstraints.HORIZONTAL;
 		c.insets = new Insets(0,20,0,0);
-    	pane.add(custIdLbl, c);
-
+		pane.add(custIdLbl, c);
+		
 		
 		custIdTxt = new JTextField(10);
 		custIdTxt.setFont(new Font("Serif", Font.ITALIC, 16));
@@ -182,9 +175,9 @@ public class ProductsGUI
 		c.gridheight = 1;
 		c.insets = new Insets(0,0,0,0);
 		//c.fill = GridBagConstraints.HORIZONTAL;
-    	pane.add(custIdTxt, c);
-
-
+		pane.add(custIdTxt, c);
+		
+		
 		
 		fetchCustHistButton = new JButton("Fetch History");
 		//c.ipady = 20;
@@ -195,7 +188,7 @@ public class ProductsGUI
 		c.gridheight = 1;
 		//c.fill = GridBagConstraints.HORIZONTAL;
 		c.insets = new Insets(0,0,0,0);
-    	pane.add(fetchCustHistButton, c);
+		pane.add(fetchCustHistButton, c);
 		fetchCustHistButton.addActionListener(fetchCustListener);
 		
 		
@@ -205,14 +198,14 @@ public class ProductsGUI
 		c.gridy = 3;
 		c.gridx = 0;
 		c.gridwidth = 0;
-	    c.fill = GridBagConstraints.HORIZONTAL;
-	    c.insets = new Insets(5,0,-15,0);
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.insets = new Insets(5,0,-15,0);
 		c.weightx = 1;
-	    pane.add(topSeparator, c);
-	    
-	    
-	    
-	    //First Name
+		pane.add(topSeparator, c);
+		
+		
+		
+		//First Name
 		JLabel fNameLbl = new JLabel("First Name:");
 		c.ipady = 20;
 		c.weightx = 1.0;
@@ -221,7 +214,8 @@ public class ProductsGUI
 		c.gridwidth = 1;
 		c.gridheight = 1;
 		c.insets = new Insets(0,20,0,0);
-    	pane.add(fNameLbl, c);
+		pane.add(fNameLbl, c);
+			
 		
 		fNameTxt = new JTextField("");
 		c.ipady = 20;
@@ -231,7 +225,9 @@ public class ProductsGUI
 		c.gridwidth = 1;
 		c.gridheight = 1;
 		c.insets = new Insets(0,-30,0,60);
-    	pane.add(fNameTxt, c);
+		pane.add(fNameTxt, c);
+		fNameTxt.setEnabled(false);
+		
 		
 		
 		//Surname
@@ -243,7 +239,7 @@ public class ProductsGUI
 		c.gridwidth = 1;
 		c.gridheight = 1;
 		c.insets = new Insets(0,20,0,30);
-    	pane.add(sNameLbl, c);
+		pane.add(sNameLbl, c);
 		
 		sNameTxt = new JTextField("");
 		c.ipady = 20;
@@ -253,7 +249,9 @@ public class ProductsGUI
 		c.gridwidth = 1;
 		c.gridheight = 1;
 		c.insets = new Insets(0,-30,0,60);
-    	pane.add(sNameTxt, c);
+		pane.add(sNameTxt, c);
+		sNameTxt.setEnabled(false);
+		
 		
 		
 		//House Number
@@ -265,7 +263,7 @@ public class ProductsGUI
 		c.gridwidth = 1;
 		c.gridheight = 1;
 		c.insets = new Insets(0,-30,0,60);
-    	pane.add(houseNumLbl, c);
+		pane.add(houseNumLbl, c);
 		
 		houseNumTxt = new JTextField("");
 		c.ipady = 20;
@@ -275,7 +273,8 @@ public class ProductsGUI
 		c.gridwidth = 1;
 		c.gridheight = 1;
 		c.insets = new Insets(0,-30,0,-60);
-    	pane.add(houseNumTxt, c);
+		pane.add(houseNumTxt, c);
+		houseNumTxt.setEnabled(false);
 		
 		
 		//Street Name
@@ -287,7 +286,7 @@ public class ProductsGUI
 		c.gridwidth = 1;
 		c.gridheight = 1;
 		c.insets = new Insets(0,-30,0,60);
-    	pane.add(streetNameLbl, c);
+		pane.add(streetNameLbl, c);
 		
 		streetNameTxt = new JTextField("");
 		c.ipady = 20;
@@ -297,7 +296,8 @@ public class ProductsGUI
 		c.gridwidth = 1;
 		c.gridheight = 1;
 		c.insets = new Insets(0,-30,0,-60);
-    	pane.add(streetNameTxt, c);
+		pane.add(streetNameTxt, c);
+		streetNameTxt.setEnabled(false);
 		
 		
 		//City
@@ -309,7 +309,7 @@ public class ProductsGUI
 		c.gridwidth = 1;
 		c.gridheight = 1;
 		c.insets = new Insets(0,100,0,0);
-    	pane.add(cityLbl, c);
+		pane.add(cityLbl, c);
 		
 		cityTxt = new JTextField("");
 		c.ipady = 20;
@@ -319,8 +319,8 @@ public class ProductsGUI
 		c.gridwidth = 1;
 		c.gridheight = 1;
 		c.insets = new Insets(0,30,0,0);
-    	pane.add(cityTxt, c);
-		
+		pane.add(cityTxt, c);
+		cityTxt.setEnabled(false);
 		
 		//County
 		JLabel countyLbl = new JLabel("County:");
@@ -331,7 +331,7 @@ public class ProductsGUI
 		c.gridwidth = 1;
 		c.gridheight = 1;
 		c.insets = new Insets(0,100,0,0);
-    	pane.add(countyLbl, c);
+		pane.add(countyLbl, c);
 		
 		countyTxt = new JTextField("");
 		c.ipady = 20;
@@ -341,7 +341,8 @@ public class ProductsGUI
 		c.gridwidth = 1;
 		c.gridheight = 1;
 		c.insets = new Insets(0,30,0,0);
-    	pane.add(countyTxt, c);
+		pane.add(countyTxt, c);
+		countyTxt.setEnabled(false);
 		
 		
 		//Post Code
@@ -353,7 +354,7 @@ public class ProductsGUI
 		c.gridwidth = 1;
 		c.gridheight = 1;
 		c.insets = new Insets(0,100,0,0);
-    	pane.add(postCodeLbl, c);
+		pane.add(postCodeLbl, c);
 		
 		postCodeTxt = new JTextField("");
 		c.ipady = 20;
@@ -363,7 +364,8 @@ public class ProductsGUI
 		c.gridwidth = 1;
 		c.gridheight = 1;
 		c.insets = new Insets(0,30,0,0);
-    	pane.add(postCodeTxt, c);
+		pane.add(postCodeTxt, c);
+		postCodeTxt.setEnabled(false);
 		
 		
 		//Telephone No.
@@ -375,7 +377,7 @@ public class ProductsGUI
 		c.gridwidth = 1;
 		c.gridheight = 1;
 		c.insets = new Insets(0,20,0,0);
-    	pane.add(phoneNumLbl, c);
+		pane.add(phoneNumLbl, c);
 		
 		phoneNumTxt = new JTextField("");
 		c.ipady = 20;
@@ -385,8 +387,8 @@ public class ProductsGUI
 		c.gridwidth = 1;
 		c.gridheight = 1;
 		c.insets = new Insets(0,-30,0,60);
-    	pane.add(phoneNumTxt, c);
-		
+		pane.add(phoneNumTxt, c);
+		phoneNumTxt.setEnabled(false);
 		
 		//Email Address
 		JLabel emailLbl = new JLabel("Email Address:");
@@ -397,7 +399,7 @@ public class ProductsGUI
 		c.gridwidth = 1;
 		c.gridheight = 1;
 		c.insets = new Insets(0,-30,0,60);
-    	pane.add(emailLbl, c);
+		pane.add(emailLbl, c);
 		
 		emailTxt = new JTextField("");
 		c.ipady = 20;
@@ -407,22 +409,22 @@ public class ProductsGUI
 		c.gridwidth = 1;
 		c.gridheight = 1;
 		c.insets = new Insets(0,-30,0,-60);
-    	pane.add(emailTxt, c);
-    	
-    	
-    	//horizontal separator
+		pane.add(emailTxt, c);
+		emailTxt.setEnabled(false);
+		
+		//horizontal separator
 		JSeparator lowerSeparator = new JSeparator(JSeparator.HORIZONTAL);
 		lowerSeparator.setPreferredSize(new Dimension(1,6));
 		c.gridy = 7;
 		c.gridx = 0;
 		c.gridwidth = 0;
-	    c.fill = GridBagConstraints.HORIZONTAL;
-	    c.insets = new Insets(5,0,-15,0);
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.insets = new Insets(5,0,-15,0);
 		c.weightx = 1;
-	    pane.add(lowerSeparator, c);
-    	
-    	
-    	JLabel discussionLbl = new JLabel("Previous Discussion History");
+		pane.add(lowerSeparator, c);
+		
+		
+		JLabel discussionLbl = new JLabel("Previous Discussion History");
 		//c.ipady = 20;
 		//c.weightx = 1;
 		c.gridy = 8;
@@ -431,20 +433,20 @@ public class ProductsGUI
 		c.gridheight = 1;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.insets = new Insets(0,0,0,0);
-    	pane.add(discussionLbl, c);
+		pane.add(discussionLbl, c);
 		
-    	
-    	
-	    //add text area
-	    readOnlyTextArea = new JTextArea(10, 40);
-	    readOnlyTextArea.setEditable(false);
+		
+		
+		//add text area
+		readOnlyTextArea = new JTextArea(10, 40);
+		readOnlyTextArea.setEditable(false);
 		readOnlyTextArea.setFont(new Font("Serif", Font.ITALIC, 16));
 		readOnlyTextArea.setLineWrap(true);
 		readOnlyTextArea.setWrapStyleWord(true);
 		
 		readOnlyScrollPane = new JScrollPane(readOnlyTextArea);
 		readOnlyScrollPane.setVerticalScrollBarPolicy(
-        JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		//complaintScrollPane.setPreferredSize(new Dimension(400, 200));
 		//c.fill = GridBagConstraints.VERTICAL;
 		c.fill = GridBagConstraints.HORIZONTAL;
@@ -458,19 +460,19 @@ public class ProductsGUI
 		c.insets = new Insets(0,0,0,0);
 		pane.add(readOnlyScrollPane, c);
 		//textArea.getDocument().addDocumentListener(this);
-	    
-	    
-	    
-	    //add text area
-	    discussTextArea = new JTextArea("Add discussion...", 10, 40);
+			
+		
+		//add text area
+		discussTextArea = new JTextArea("Add discussion...", 10, 40);
 		discussTextArea.setFont(new Font("Serif", Font.ITALIC, 16));
 		discussTextArea.setLineWrap(true);
 		discussTextArea.setWrapStyleWord(true);
 		discussTextArea.addFocusListener(complaintFocusListener);
+		discussTextArea.setEnabled(false);
 		
 		discussScrollPane = new JScrollPane(discussTextArea);
 		discussScrollPane.setVerticalScrollBarPolicy(
-        JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		//complaintScrollPane.setPreferredSize(new Dimension(400, 200));
 		//c.fill = GridBagConstraints.VERTICAL;
 		c.fill = GridBagConstraints.HORIZONTAL;
@@ -486,7 +488,7 @@ public class ProductsGUI
 		//textArea.getDocument().addDocumentListener(this);
 		
 		
-		JButton newComplButton = new JButton("Add Discussion to History");
+		newComplButton = new JButton("Add Discussion to History");
 		//c.ipady = 20;
 		//c.weightx = 1;
 		c.gridy = 10;
@@ -495,8 +497,9 @@ public class ProductsGUI
 		c.gridheight = 1;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.insets = new Insets(0,0,0,0);
-    	pane.add(newComplButton, c);
+		pane.add(newComplButton, c);
 		newComplButton.addActionListener(addDiscussionListener);
+		newComplButton.setEnabled(false);
 		
 		
 		JButton prodDescButton = new JButton("Product Descriptions");
@@ -508,17 +511,16 @@ public class ProductsGUI
 		c.gridheight = 1;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.insets = new Insets(10,0,0,0);
-    	pane.add(prodDescButton, c);
+		pane.add(prodDescButton, c);
 		prodDescButton.addActionListener(productDescListener);
     }
-    
-    
-    
-    public static void createAndShowGUI() {
+      
+    public static void createAndShowGUI()
+    {
         //Create and set up the window. Set instantiation parameters.
         frame = new JFrame("Products");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        	
+
     	frame.setResizable(false);
 		frame.setLocationRelativeTo(null);
 		frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);			
@@ -533,26 +535,40 @@ public class ProductsGUI
     
     //event listeners
     class FetchCustListener implements ActionListener
-    	{
-    		public void actionPerformed(ActionEvent e)
-    		{
-    			String custId = custIdTxt.getText();
-				Connection connection = View.getConnection();
-				Statement st = null;
-				Statement st2 = null;
-				ResultSet rs = null;
-				ResultSet rs2 = null;
-			
-				String previousHistory = "";
-				try
-				{
-					st = connection.createStatement();
-					rs = st.executeQuery("SELECT cust_id,fName,sName,houseNo,streetName,city,county,postCode,telNo,email FROM customer WHERE cust_id =" + custId + ";");
-
-						
-							
-				boolean found = rs.next();
+    {
+		public void actionPerformed(ActionEvent e)
+		{
+			String custId = custIdTxt.getText();
+			Connection connection = View.getConnection();
+			Statement st = null;
+			Statement st2 = null;
+			Statement st3 = null;
+			ResultSet rs = null;
+			ResultSet rs2 = null;
+			ResultSet rs3 = null;
+			String S = "";
+		
+			String previousHistory = "";
+			if(("".equals(custId)) )
+			{
+				JOptionPane.showMessageDialog(null,"Please enter a customer ID","Validation Warning",JOptionPane.WARNING_MESSAGE);
+			}
+			else
+			try
+			{
+				st = connection.createStatement();
 				
+				rs3 = st.executeQuery("SELECT status FROM customer WHERE cust_id =" + custId + ";");
+				rs3.first();
+				S = rs3.getString("status");
+				if (S.equals("1"))
+				{
+					JOptionPane.showMessageDialog(null,"You are viewing an account that has been closed!");
+					rs3.next();
+				}
+					
+				rs = st.executeQuery("SELECT cust_id,fName,sName,houseNo,streetName,city,county,postCode,telNo,email FROM customer WHERE cust_id =" + custId + ";");					
+				boolean found = rs.next();		
 				if (!found)
 				{
 					JOptionPane.showMessageDialog(null,"No customer found!");
@@ -571,40 +587,29 @@ public class ProductsGUI
 						sNameTxt.setText(rs.getString("sName"));
 						houseNumTxt.setText(rs.getString("houseNo"));
 						streetNameTxt.setText(rs.getString("streetName"));
-						cityTxt.setText(rs.getString("city"));
+						cityTxt.setText(rs.getString("City"));
 						countyTxt.setText(rs.getString("county"));
 						postCodeTxt.setText(rs.getString("postCode"));
 						phoneNumTxt.setText(rs.getString("telNo"));
 						emailTxt.setText(rs.getString("email"));	
-						custIdTxt.setEnabled(false);	
-						fNameTxt.setEnabled(false);
-						sNameTxt.setEnabled(false);
-						houseNumTxt.setEnabled(false);
-						streetNameTxt.setEnabled(false);
-						cityTxt.setEnabled(false);
-						countyTxt.setEnabled(false);
-						postCodeTxt.setEnabled(false);
-						phoneNumTxt.setEnabled(false);
-						emailTxt.setEnabled(false);
-						fetchCustHistButton.setEnabled(false);		
+						custIdTxt.setEnabled(false);		
+						newComplButton.setEnabled(true);	
+						discussTextArea.setEnabled(true);
 					}
 					
 				}
-				}
-				catch(SQLException ex)
-				{
-				
-					ex.printStackTrace();
-				}
-				
-				try
-				{
-					st2 = connection.createStatement();
-					rs2 = st2.executeQuery("SELECT DATE_FORMAT(dateTime, '%W %D %M %Y %H:%i') AS dateTime,discussion FROM discussion WHERE cust_id =" + custId + ";");
-						
-							
-				boolean found2 = rs2.next();
-				
+			}
+			catch(SQLException ex)
+			{		
+				JOptionPane.showMessageDialog(null,"Cannot find customer with that ID","Validation Warning",JOptionPane.WARNING_MESSAGE);
+			}
+			
+			try
+			{
+				st2 = connection.createStatement();
+				rs2 = st2.executeQuery("SELECT DATE_FORMAT(dateTime, '%W %D %M %Y %H:%i') AS dateTime,discussion FROM discussion WHERE cust_id =" + custId + ";");
+										
+				boolean found2 = rs2.next();				
 				if (!found2)
 				{
 					readOnlyTextArea.setText("No Previous history");
@@ -622,114 +627,104 @@ public class ProductsGUI
 						previousHistory += rs2.getString(1) + "\n" + rs2.getString(2) + "\n\n";
 						rs2.next();
 					}
-					readOnlyTextArea.setText(previousHistory);
-					
+					readOnlyTextArea.setText(previousHistory);					
 				}
-				}
-				catch(SQLException ex)
-				{
-				
-					ex.printStackTrace();
-				}
-
-    		}
-   		
-    	}
+			}
+			catch(SQLException ex)
+			{			
+				ex.printStackTrace();
+			}
+		
+		}  		
+    }
+    	
     class NavigationListener implements ActionListener
-    	{
-    		public void actionPerformed(ActionEvent e)
-    		{
-    			if (e.getActionCommand().equals("Home")) {                     
-                    v = new View();	
-			    	v.pack();
-					v.setSize(300,300);
-			    	
-                    frame.dispose();
-    			}
-                if (e.getActionCommand().equals("Complaints")) {
-                    cgui = new ComplaintGUI();
-			    	cgui.createAndShowGUI();
-                    
-                    frame.dispose();
-                }
-                if (e.getActionCommand().equals("Joining")) {
-                    jgui = new JoiningGUI();
-			    	jgui.createAndShowGUI();
-
-                    frame.dispose();
-                }
-                if (e.getActionCommand().equals("Common Problems")) {
-                    pbgui = new ProblemsGUI();
-			    	pbgui.pack();
-
-                    frame.dispose();
-                }
-                if (e.getActionCommand().equals("Customer Details")) {
-                    cdgui = new CustDetailsGUI();
-			    	cdgui.createAndShowGUI();
-
-                    frame.dispose();
-                }
-                if (e.getActionCommand().equals("Close")) {
-                	System.exit(0);
-             }
-    		}
-    	}
-    	
-    	class AddDiscussionListener implements ActionListener
-	    	{
-				public void actionPerformed(ActionEvent ev)
-				{
-					String discussionIn = discussTextArea.getText();
-					String previousDiscussion = readOnlyTextArea.getText();
-					String custId = custIdTxt.getText();
-			    	
-			    	
-				    	//Database insert
-				    	Connection connection = View.getConnection();
-						Statement st = null;
-						ResultSet rs = null;
-						DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm");
-						Date date = new Date();
-						String dateNow = dateFormat.format(date);
-						try
-						{
-							st = connection.createStatement();
-							String discussionSql = "INSERT INTO discussion (cust_id, dateTime, discussion) VALUES (" + custId + ",'" + dateNow + "','" + discussionIn + "')"; 
-							st.executeUpdate(discussionSql);
-							JOptionPane.showMessageDialog(null,"Discussion added!");
-						}
-						catch(SQLException ex)
-						{
-							readOnlyTextArea.setText("Please Enter Customer ID.");
-							ex.printStackTrace();
-						}
-			    	
-				}	    		
-	    	}
-	    	
-	    class ProductDescListener implements ActionListener
+    {
+		public void actionPerformed(ActionEvent e)
 		{
-			public void actionPerformed(ActionEvent e)
-    		{
-				p = new ProductDescGUI();
-				p.createAndShowGUI();
-    		}	
-		}   
+			if (e.getActionCommand().equals("Home")) 
+			{
+			 	v = new View();	
+			    v.createAndShowGUI();		    	
+			   	frame.dispose();
+			}
+			if (e.getActionCommand().equals("Complaints")) 
+			{
+			 	cgui = new ComplaintGUI();
+			   	cgui.createAndShowGUI();	
+			   	frame.dispose();
+			}
+			if (e.getActionCommand().equals("Joining")) 
+			{
+			    jgui = new JoiningGUI();
+				jgui.createAndShowGUI();
+			    frame.dispose();
+			}
+			if (e.getActionCommand().equals("Customer Details")) 
+			{
+			    cdgui = new CustDetailsGUI();
+				cdgui.createAndShowGUI();
+			    frame.dispose();
+			}
+			if (e.getActionCommand().equals("Customer Validation")) 
+			{
+			    cvgui = new CustValidationGUI();
+				cvgui.createAndShowGUI();
+			    frame.dispose();
+			}
+			if (e.getActionCommand().equals("Close")) {
+			    System.exit(0);
+			}
+		}
+	}
     	
+    class AddDiscussionListener implements ActionListener
+	{
+		public void actionPerformed(ActionEvent ev)
+		{
+			String discussionIn = discussTextArea.getText();
+			String previousDiscussion = readOnlyTextArea.getText();
+			String custId = custIdTxt.getText();
+	    	  	
+	    	//Database insert
+	    	Connection connection = View.getConnection();
+			Statement st = null;
+			ResultSet rs = null;
+			DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+			Date date = new Date();
+			String dateNow = dateFormat.format(date);
+			try
+			{
+				st = connection.createStatement();
+				String discussionSql = "INSERT INTO discussion (cust_id, dateTime, discussion) VALUES (" + custId + ",'" + dateNow + "','" + discussionIn + "')"; 
+				st.executeUpdate(discussionSql);
+				JOptionPane.showMessageDialog(null,"Discussion added!");
+			}
+			catch(SQLException ex)
+			{
+				readOnlyTextArea.setText("Please Enter Customer ID.");
+				ex.printStackTrace();
+			}
+		}    		
+	}
+	    	
+	class ProductDescListener implements ActionListener
+	{
+		public void actionPerformed(ActionEvent e)
+		{
+			p = new ProductDescGUI();
+			p.createAndShowGUI();
+		}	
+	}     	
     	
-    	class ComplaintFocusListener implements FocusListener
-		     {
-		     	public void focusGained(FocusEvent e)
-		     	{
-					discussTextArea.setText("");
-		     	}
-		        public void focusLost(FocusEvent e) 
-		        {
-		       		 
-		    	}
-		     	
-		     	
-		     }
-	
+    class ComplaintFocusListener implements FocusListener
+	{
+     	public void focusGained(FocusEvent e)
+     	{
+			discussTextArea.setText("");
+     	}
+        public void focusLost(FocusEvent e) 
+        {  		 
+    	}		     	
+	}
 }

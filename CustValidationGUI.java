@@ -1,3 +1,11 @@
+/**
+* @(#)Call_Centre_Training.java
+*
+* Call Centre Training Application
+*
+* @authors: Robbie Aftab, Ash Ellis, Steve Glasspool, Matt Kennedy
+*/
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -25,7 +33,6 @@ public class CustValidationGUI
 	ComplaintGUI cgui;
 	ProductsGUI pgui;
 	JoiningGUI jgui;
-	ProblemsGUI pbgui;
 	CustDetailsGUI cdgui;
 	
 	static JFrame frame;
@@ -46,13 +53,17 @@ public class CustValidationGUI
     
     
     public static void addComponentsToPane(Container pane)
-    {      	  	  	
-    	/*if (RIGHT_TO_LEFT)
-    	{
-            pane.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
-        }*/
- 
-		
+    {
+    	// Get the default toolkit
+		Toolkit toolkit = Toolkit.getDefaultToolkit();
+
+		// Get the current screen size
+		Dimension scrnsize = toolkit.getScreenSize();
+		double width = (scrnsize.getWidth() / 2) - 150;
+		double height = (scrnsize.getHeight() / 2) - 150;
+    	
+    	frame.setLocation((int)width,(int)height);
+    	
 		//scroll pane
 		JScrollPane complaintScrollPane;
 		JScrollPane readOnlyScrollPane;
@@ -66,10 +77,9 @@ public class CustValidationGUI
 		JMenuItem fileClose = new JMenuItem("Close");
 		
 		JMenuItem navHome = new JMenuItem("Home");
-		JMenuItem navValidation = new JMenuItem("Customer Validation");
+		JMenuItem navComplaints = new JMenuItem("Complaints");
 		JMenuItem navProducts = new JMenuItem("Products");
 		JMenuItem navJoining = new JMenuItem("Joining");
-		JMenuItem navProblems = new JMenuItem("Common Problems");
 		JMenuItem navCustDetails = new JMenuItem("Customer Details");
 		
 		JMenuItem helpFAQ = new JMenuItem("FAQ");
@@ -92,18 +102,16 @@ public class CustValidationGUI
     	
     	//nav menu
     	pageNav.add(navHome);
-    	pageNav.add(navValidation);
+    	pageNav.add(navComplaints);
     	pageNav.add(navProducts);
     	pageNav.add(navJoining);
-    	pageNav.add(navProblems);
     	pageNav.add(navCustDetails);
     	
     	fileClose.addActionListener(navigationListener);
     	navHome.addActionListener(navigationListener);
-    	navValidation.addActionListener(navigationListener);
+    	navComplaints.addActionListener(navigationListener);
     	navProducts.addActionListener(navigationListener);
     	navJoining.addActionListener(navigationListener);
-    	navProblems.addActionListener(navigationListener);
     	navCustDetails.addActionListener(navigationListener);
     	
     	//help menu
@@ -306,64 +314,66 @@ public class CustValidationGUI
     class SubmitListener implements ActionListener
     {
     	public void actionPerformed(ActionEvent e)
-    	{
-    		
-    		
-    		
-			String regexp="^([A-PR-UWYZ](([0-9](([0-9]|[A-HJKSTUW])?)?)|([A-HK-Y][0-9]([0-9]|[ABEHMNPRVWXY])?)) [0-9][ABD-HJLNP-UW-Z]{2})|GIR 0AA$";
-			Pattern pattern = Pattern.compile(regexp);
-			Matcher matcher = pattern.matcher(postCodeTxt.getText().toUpperCase());
-    	
-    		if(("".equals(sNameTxt)) || ("".equals(houseNoTxt))||("".equals(postCodeTxt)))
-    		{
+    	{		
+
+    		if(("".equals(sNameTxt.getText())) || ("".equals(houseNoTxt.getText()))||("".equals(postCodeTxt.getText())))
+    		{   			
     			JOptionPane.showMessageDialog(null,"No blank fields allowed!","Validation Warning",JOptionPane.WARNING_MESSAGE);
     		}
-    		else if (matcher.matches())
-    		{
-    			
-    			Connection connection = View.getConnection();
-				Statement st = null;
-				ResultSet rs = null;
-				
-				try
-				{
-					st = connection.createStatement();
-					String submitSql = "SELECT secQues FROM customer WHERE sName =  '" + sNameTxt.getText() + "' AND houseNo =  '" + houseNoTxt.getText() + "' AND postCode = '" + postCodeTxt.getText() + "'"; 
-					rs = st.executeQuery(submitSql);
-	
-					boolean found = rs.next();
-					
-					if (!found)
-					{
-					  	JOptionPane.showMessageDialog(null,"No existing Customer!","Validation Warning",JOptionPane.WARNING_MESSAGE);
-					  	sNameTxt.setText("");
-					  	houseNoTxt.setText("");
-					  	postCodeTxt.setText("");
-					  	secQuestionTxt.setText("");
-					  	secAnsTxt.setText("");	
-					}
-					else
-					{
-						secQuestionTxt.setText(rs.getString(1));
-						houseNoTxt.setEnabled(false);
-						sNameTxt.setEnabled(false);	
-						postCodeTxt.setEnabled(false);
-						submitBtn.setEnabled(false);
-						secAnsTxt.setEnabled(true);
-						validateBtn.setEnabled(true);							
-					}
-				}
-				catch(SQLException ex)
-				{
-					ex.printStackTrace();
-				}
-    		}
     		else
-    		{
-    			JOptionPane.showMessageDialog(null,"Incorrect Post Code Format!","Validation Warning",JOptionPane.WARNING_MESSAGE);
+    		{	
+    			System.out.println("HOO HAR");
+    			String regexp="^([A-PR-UWYZ](([0-9](([0-9]|[A-HJKSTUW])?)?)|([A-HK-Y][0-9]([0-9]|[ABEHMNPRVWXY])?)) [0-9][ABD-HJLNP-UW-Z]{2})|GIR 0AA$";
+				Pattern pattern = Pattern.compile(regexp);
+				Matcher matcher = pattern.matcher(postCodeTxt.getText().toUpperCase());
+				
+				if(matcher.matches())
+				{
+	    			Connection connection = View.getConnection();
+					Statement st = null;
+					ResultSet rs = null;
+					
+					try
+					{
+						st = connection.createStatement();
+						String submitSql = "SELECT secQues FROM customer WHERE sName =  '" + sNameTxt.getText() + "' AND houseNo =  '" 
+							+ houseNoTxt.getText() + "' AND postCode = '" + postCodeTxt.getText() + "'"; 
+						rs = st.executeQuery(submitSql);
+		
+						boolean found = rs.next();					
+						if (!found)
+						{
+						  	JOptionPane.showMessageDialog(null,"No existing Customer!","Validation Warning",JOptionPane.WARNING_MESSAGE);
+						  	sNameTxt.setText("");
+						  	houseNoTxt.setText("");
+						  	postCodeTxt.setText("");
+						  	secQuestionTxt.setText("");
+						  	secAnsTxt.setText("");	
+						}
+						else
+						{
+							secQuestionTxt.setText(rs.getString(1));
+							houseNoTxt.setEnabled(false);
+							sNameTxt.setEnabled(false);	
+							postCodeTxt.setEnabled(false);
+							submitBtn.setEnabled(false);
+							secAnsTxt.setEnabled(true);
+							validateBtn.setEnabled(true);							
+						}
+					}
+					catch(SQLException ex)
+					{
+						ex.printStackTrace();
+					}
+	    		}
+    			else
+	    		{
+	    			JOptionPane.showMessageDialog(null,"Incorrect Post Code Format!","Validation Warning",JOptionPane.WARNING_MESSAGE);
+	    		}
     		}
     	}
     }
+    
     class ValidateListener implements ActionListener
     {
     	public void actionPerformed(ActionEvent e)
@@ -375,11 +385,11 @@ public class CustValidationGUI
 				try
 				{
 					st = connection.createStatement();
-					String validateSql = "SELECT * FROM customer WHERE sName =  '" + sNameTxt.getText() + "' AND houseNo =  '" + houseNoTxt.getText() + "' AND postCode = '" + postCodeTxt.getText() + "' AND secAns ='" + secAnsTxt.getText() + "'"; 
+					String validateSql = "SELECT * FROM customer WHERE sName =  '" + sNameTxt.getText() + "' AND houseNo =  '" +
+						 houseNoTxt.getText() + "' AND postCode = '" + postCodeTxt.getText() + "' AND secAns ='" + secAnsTxt.getText() + "'"; 
 					rs = st.executeQuery(validateSql);
 	
-					boolean found = rs.next();
-					
+					boolean found = rs.next();					
 					if (!found)
 					{
 					  	JOptionPane.showMessageDialog(null,"Incorrect security answer, please try again.","Validation Warning",JOptionPane.WARNING_MESSAGE);
@@ -408,51 +418,39 @@ public class CustValidationGUI
 				}
     	}
     }
+    
     class NavigationListener implements ActionListener
-    	{
-    		public void actionPerformed(ActionEvent e)
-    		{
-    			if (e.getActionCommand().equals("Home")) {                     
-                    v = new View();	
-			    	v.pack();
-					v.setSize(300,300);
-			    	
-                    frame.dispose();
-    			}
-                if (e.getActionCommand().equals("Complaints")) {
-                    cgui = new ComplaintGUI();
-			    	cgui.createAndShowGUI();
-                    
-                    frame.dispose();
-                }
-                if (e.getActionCommand().equals("Joining")) {
-                    jgui = new JoiningGUI();
-			    	jgui.createAndShowGUI();
-
-                    frame.dispose();
-                }
-                if (e.getActionCommand().equals("Common Problems")) {
-                    pbgui = new ProblemsGUI();
-			    	pbgui.pack();
-
-                    frame.dispose();
-                }
-                if (e.getActionCommand().equals("Products")) {
-                    pgui = new ProductsGUI();
-			    	pgui.createAndShowGUI();
-
-                    frame.dispose();
-                }
-                if (e.getActionCommand().equals("Customer Details")) {
-                    cdgui = new CustDetailsGUI();
-			    	cdgui.createAndShowGUI();
-
-                    frame.dispose();
-                }
-                if (e.getActionCommand().equals("Close")) {
-                System.exit(0);
-            	}
-    		}
-    	}
-	
+    {
+		public void actionPerformed(ActionEvent e)
+		{
+			if (e.getActionCommand().equals("Home")) {                     
+                v = new View();	
+		    	v.createAndShowGUI();
+                frame.dispose();
+			}
+            if (e.getActionCommand().equals("Complaints")) {
+                cgui = new ComplaintGUI();
+		    	cgui.createAndShowGUI();                 
+                frame.dispose();
+            }
+            if (e.getActionCommand().equals("Joining")) {
+                jgui = new JoiningGUI();
+		    	jgui.createAndShowGUI();
+                frame.dispose();
+            }
+            if (e.getActionCommand().equals("Products")) {
+                pgui = new ProductsGUI();
+		    	pgui.createAndShowGUI();
+                frame.dispose();
+            }
+            if (e.getActionCommand().equals("Customer Details")) {
+                cdgui = new CustDetailsGUI();
+		    	cdgui.createAndShowGUI();
+                frame.dispose();
+            }
+            if (e.getActionCommand().equals("Close")) {
+            System.exit(0);
+        	}
+		}
+    }	
 }

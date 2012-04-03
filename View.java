@@ -29,7 +29,7 @@ public class View
 	static JFrame frame;
 	static JMenuBar menuBar;
 	
-	static String fileLocation = "F:/standard.JPEG";
+	static String fileLocation = "logo.jpg";
     static ImageIcon img = new ImageIcon(fileLocation);
 
 	ComplaintGUI cgui;
@@ -134,7 +134,7 @@ public class View
 		c.gridy = 1;
 		c.gridwidth = 1;
 		c.gridheight = 2;
-		c.insets = new Insets(15,10,0,15);
+		c.insets = new Insets(15,10,10,15);
     	pane.add(prodPicLbl, c);
 		
 	 	//add buttons
@@ -159,7 +159,7 @@ public class View
 		c.gridwidth = 1;
 		c.gridheight = 1;
 		c.fill = GridBagConstraints.HORIZONTAL;
-		c.insets = new Insets(0,10,15,10);
+		c.insets = new Insets(0,10,200,10);
 		pane.add(complaintButton, c);   
 		complaintButton.addActionListener(navigationListener);
 		
@@ -171,7 +171,7 @@ public class View
 		c.gridwidth = 1;
 		c.gridheight = 1;
 		c.fill = GridBagConstraints.HORIZONTAL;
-		c.insets = new Insets(0,10,15,10);
+		c.insets = new Insets(-315,10,15,10);
 		pane.add(prodButton, c);   
 		prodButton.addActionListener(navigationListener);
 		
@@ -183,7 +183,7 @@ public class View
 		c.gridwidth = 1;
 		c.gridheight = 1;
 		c.fill = GridBagConstraints.HORIZONTAL;
-		c.insets = new Insets(0,10,15,10);
+		c.insets = new Insets(-200,10,15,10);
 		pane.add(joiningButton, c);   
 		joiningButton.addActionListener(navigationListener);
 				
@@ -195,7 +195,7 @@ public class View
 		c.gridwidth = 1;
 		c.gridheight = 1;
 		c.fill = GridBagConstraints.HORIZONTAL;
-		c.insets = new Insets(0,10,15,10);
+		c.insets = new Insets(-90,10,15,10);
 		pane.add(custDetailsButton, c);   
 		custDetailsButton.addActionListener(navigationListener); 
 		

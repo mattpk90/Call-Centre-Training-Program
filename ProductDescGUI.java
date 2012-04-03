@@ -303,7 +303,6 @@ public class ProductDescGUI
     {
     	public void actionPerformed(ActionEvent ev)
     	{
-			//durrhurr
     	}
    	}
 }

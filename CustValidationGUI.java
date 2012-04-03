@@ -322,7 +322,6 @@ public class CustValidationGUI
     		}
     		else
     		{	
-    			System.out.println("HOO HAR");
     			String regexp="^([A-PR-UWYZ](([0-9](([0-9]|[A-HJKSTUW])?)?)|([A-HK-Y][0-9]([0-9]|[ABEHMNPRVWXY])?)) [0-9][ABD-HJLNP-UW-Z]{2})|GIR 0AA$";
 				Pattern pattern = Pattern.compile(regexp);
 				Matcher matcher = pattern.matcher(postCodeTxt.getText().toUpperCase());
@@ -381,6 +380,7 @@ public class CustValidationGUI
     			Connection connection = View.getConnection();
 				Statement st = null;
 				ResultSet rs = null;
+				ResultSet rs2 = null;
 				
 				try
 				{
@@ -396,8 +396,10 @@ public class CustValidationGUI
 					  	secAnsTxt.setText("");
 					}
 					else
-					{
-						JOptionPane.showMessageDialog(null,"Customer validated, please continue with call.");	
+					{					
+						String cID = rs.getString("cust_id");
+					
+						JOptionPane.showMessageDialog(null,"Customer validated, please continue with call. Customer ID: " + cID);	
 						sNameTxt.setText("");
 					  	houseNoTxt.setText("");
 					  	postCodeTxt.setText("");

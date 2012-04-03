@@ -148,7 +148,7 @@ public class CallLogView
 		c.gridwidth = 1;
 		c.gridheight = 1;
 		c.fill = GridBagConstraints.HORIZONTAL;
-		c.insets = new Insets(0,20,0,0);
+		c.insets = new Insets(0,10,0,0);
 		pane.add(callTakerLbl, c);
 		
 		callTakerTextField = new JTextField(10);
@@ -221,6 +221,8 @@ public class CallLogView
 	     {
 	     	Date endDate = new Date();
 			endDateString = dateFormat.format(endDate);
+			
+			JOptionPane.showMessageDialog(null,"Call Duration: " + elapsedTime() + " seconds.");
 	     	
 	     	callTakerTextField.setEnabled(true);
 	     	commentsTextArea.setEnabled(true);

@@ -515,7 +515,7 @@ public class JoiningGUI
 	    	else
 	    	{
 		    	//Database insert
-		    	Connection connection = View.getConnection();
+		    	Connection connection = Call_Centre_Training.getConnection();
 				Statement st = null;
 				ResultSet rs = null;
 				

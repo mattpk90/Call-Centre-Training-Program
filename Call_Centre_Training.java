@@ -27,8 +27,8 @@ public class Call_Centre_Training
         // Set System L&F
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
     	
-    	View v = new View();	
-		v.createAndShowGUI();
+    	//View v = new View();	
+		//v.createAndShowGUI();
 		
 		CallLogView c = new CallLogView();
 		c.createAndShowGUI();

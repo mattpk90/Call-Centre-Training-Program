@@ -43,6 +43,7 @@ public class CallLogView
 	static CallLogListener callLogListener;
 	static StartCallListener startCallListener;
 	static EndCallListener endCallListener;
+	View v;	
 	
 	public CallLogView()
 	{		
@@ -206,6 +207,8 @@ public class CallLogView
      {
 	     public void actionPerformed(ActionEvent e)
 	     {
+	     	v = new View();
+	     	v.createAndShowGUI();
 			startTimer();
 			startDate = new Date();
 			startDateString = dateFormat.format(startDate);

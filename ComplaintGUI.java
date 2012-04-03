@@ -342,7 +342,7 @@ public class ComplaintGUI
 		public void actionPerformed(ActionEvent ev)
 		{		
 			String custId = custIdTxt.getText();
-			Connection connection = View.getConnection();
+			Connection connection = Call_Centre_Training.getConnection();
 			Statement st = null;
 			ResultSet rs = null;
 			ResultSet rs2 = null;
@@ -414,7 +414,7 @@ public class ComplaintGUI
 	    	
 	    	
 		    	//Database insert
-		    	Connection connection = View.getConnection();
+		    	Connection connection = Call_Centre_Training.getConnection();
 				Statement st = null;
 				ResultSet rs = null;
 				DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm");
@@ -434,7 +434,7 @@ public class ComplaintGUI
 				}
 				
 			String custId2 = custIdTxt.getText();
-			Connection connection2 = View.getConnection();
+			Connection connection2 = Call_Centre_Training.getConnection();
 			Statement st2 = null;
 			ResultSet rs2 = null;
 			

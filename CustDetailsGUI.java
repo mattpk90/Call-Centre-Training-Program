@@ -510,7 +510,7 @@ public class CustDetailsGUI
 			if (result == JOptionPane.YES_OPTION)
 			{
 				String custId = custIdTxt.getText();	
-				Connection connection = View.getConnection();
+				Connection connection = Call_Centre_Training.getConnection();
 				Statement st = null;
 				ResultSet rs = null;
 				DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm");
@@ -569,7 +569,7 @@ public class CustDetailsGUI
     		if (result == JOptionPane.YES_OPTION)
     		{
 				String custId = custIdTxt.getText();	
-				Connection connection = View.getConnection();
+				Connection connection = Call_Centre_Training.getConnection();
 				Statement st = null;
 				ResultSet rs = null;
 								
@@ -629,7 +629,7 @@ public class CustDetailsGUI
 				String emailIn = emailTxt.getText();
 				String secQuestionIn = (String)secQuestionCombo.getSelectedItem();
 				String secAnswerIn = secAnswerTxt.getText();
-				Connection connection = View.getConnection();
+				Connection connection = Call_Centre_Training.getConnection();
 				Statement st = null;
 				ResultSet rs = null;
 				try
@@ -660,7 +660,7 @@ public class CustDetailsGUI
 		{			
 			String custId = custIdTxt.getText();
 			String secQues = ""; 
-			Connection connection = View.getConnection();
+			Connection connection = Call_Centre_Training.getConnection();
 			Statement st = null;
 			ResultSet rs = null;
 			String Q1 = "Mothers Maiden Name?";

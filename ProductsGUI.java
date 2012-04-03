@@ -539,7 +539,7 @@ public class ProductsGUI
 		public void actionPerformed(ActionEvent e)
 		{
 			String custId = custIdTxt.getText();
-			Connection connection = View.getConnection();
+			Connection connection = Call_Centre_Training.getConnection();
 			Statement st = null;
 			Statement st2 = null;
 			Statement st3 = null;
@@ -687,7 +687,7 @@ public class ProductsGUI
 			String custId = custIdTxt.getText();
 	    	  	
 	    	//Database insert
-	    	Connection connection = View.getConnection();
+	    	Connection connection = Call_Centre_Training.getConnection();
 			Statement st = null;
 			ResultSet rs = null;
 			DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm");

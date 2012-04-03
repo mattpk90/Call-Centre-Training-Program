@@ -48,9 +48,9 @@ public class ProductDescGUI
     static ComboListener comboListener;
     static NextComboListener nextComboListener;
     
-    static String fileLocation = "F:/test.jpg";
+    static String fileLocation = "test.jpg";
     static String currentFileLocation = "";
-    static ImageIcon img = new ImageIcon(fileLocation);
+    static ImageIcon img = new ImageIcon(ProductDescGUI.class.getResource(fileLocation));
 	
 	public ProductDescGUI()
 	{		

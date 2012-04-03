@@ -30,7 +30,7 @@ public class View
 	static JMenuBar menuBar;
 	
 	static String fileLocation = "logo.jpg";
-    static ImageIcon img = new ImageIcon(fileLocation);
+    static ImageIcon img = new ImageIcon(View.class.getResource("logo.jpg"));
 
 	ComplaintGUI cgui;
 	ProductsGUI pgui;

@@ -42,7 +42,7 @@ public class Call_Centre_Training
 		try
 		{
 			Class.forName("com.mysql.jdbc.Driver");
-			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/bgtraining","root","");
+			conn = DriverManager.getConnection("jdbc:mysql://instance10055.db.xeround.com:6860/bgTraining?user=bgAdmin&password=superuser");
 		}
 		catch(SQLException ex)
 		{

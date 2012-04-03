@@ -328,7 +328,7 @@ public class CustValidationGUI
 				
 				if(matcher.matches())
 				{
-	    			Connection connection = View.getConnection();
+	    			Connection connection = Call_Centre_Training.getConnection();
 					Statement st = null;
 					ResultSet rs = null;
 					
@@ -377,7 +377,7 @@ public class CustValidationGUI
     {
     	public void actionPerformed(ActionEvent e)
     	{
-    			Connection connection = View.getConnection();
+    			Connection connection = Call_Centre_Training.getConnection();
 				Statement st = null;
 				ResultSet rs = null;
 				ResultSet rs2 = null;

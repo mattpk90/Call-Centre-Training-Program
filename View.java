@@ -264,25 +264,5 @@ public class View
                 System.exit(0);
             }
 	     }
-     }
-     
-     //This is the class which is called for every database connection
-     public static Connection getConnection() {
-Connection conn = null;
-try
-{
-Class.forName("com.mysql.jdbc.Driver");
-conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/bgtraining","root","");
-}
-catch(SQLException ex)
-{
-ex.printStackTrace();
-}
-catch(ClassNotFoundException ex)
-{
-ex.printStackTrace();
-}
-return conn;
-}
-    
+     }   
 }

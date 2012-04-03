@@ -64,7 +64,7 @@ public class CallLogView
 			String callTakerIn = callTakerTextField.getText();
 			
 	    	//Database insert
-	    	Connection connection = View.getConnection();
+	    	Connection connection = Call_Centre_Training.getConnection();
 			Statement st = null;
 			ResultSet rs = null;
 			

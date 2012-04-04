@@ -43,6 +43,7 @@ public class Call_Centre_Training
 		{
 			Class.forName("com.mysql.jdbc.Driver");
 			conn = DriverManager.getConnection("jdbc:mysql://instance10055.db.xeround.com:6860/bgTraining?user=bgAdmin&password=superuser");
+			//conn = DriverManager.getConnection("jdbc:mysql://edward.solent.ac.uk:3306/ssd1?user=iaftab&password=rUg9ne4P");
 		}
 		catch(SQLException ex)
 		{

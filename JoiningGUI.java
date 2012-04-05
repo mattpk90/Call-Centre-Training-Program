@@ -21,7 +21,8 @@ import java.io.InputStream;
 import java.sql.PreparedStatement;
 import java.sql.Blob;
 import java.io.IOException;
-
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class JoiningGUI
 {
@@ -487,64 +488,84 @@ public class JoiningGUI
     {
     	public void actionPerformed(ActionEvent ev)
     	{
+    		Pattern telephonePattern = Pattern.compile("\\Q+\\E[0-9]{0,14}$|[0-9]{0,14}$");
+    		Matcher phoneMatcher = telephonePattern.matcher(phoneNumTxt.getText());
+    		
 			String fNameIn = fNameTxt.getText();
 	    	String sNameIn = sNameTxt.getText();
 	    	String houseNumIn = houseNumTxt.getText();
 	    	String streetNameIn = streetNameTxt.getText();
 	    	String cityIn = cityTxt.getText();
 	    	String countyIn = countyTxt.getText();
-	    	String postcodeIn = postCodeTxt.getText();
-	    	String phoneIn = phoneNumTxt.getText();
-	    	String emailIn = emailTxt.getText();
-	    	String secQuestionIn = (String)secQuestionCombo.getSelectedItem();
-	    	String secAnswerIn = secAnswerTxt.getText();
-	    	
-	    	boolean testFNameIn = JoiningGUI.numericVal(fNameIn);
-	    	boolean testSNameIn = JoiningGUI.numericVal(sNameIn);
-	    	boolean testphoneIn = JoiningGUI.numericVal(phoneIn);
-	    	
-	    	if(("".equals(fNameIn)) || ("".equals(sNameIn))||("".equals(houseNumIn))||("".equals(streetNameIn))||("".equals(cityIn))
-	    		||("".equals(countyIn))||("".equals(postcodeIn))||("".equals(emailIn))||("".equals(secQuestionIn))||("".equals(secAnswerIn)))		    			
+	    	String postCodeIn = postCodeTxt.getText();
+	    	if(!phoneMatcher.matches())
 	    	{
-	    		JOptionPane.showMessageDialog(null,"No blank fields allowed!");
-	    	}
-	    	else if((testFNameIn == false) || (testSNameIn == false) || (testphoneIn ==true))
+	    		JOptionPane.showMessageDialog(null,"Phone number can contain only numbers.");
+	    	}else
 	    	{
-	    		JOptionPane.showMessageDialog(null,"First and last name can contain only letters, phone number can contain only numbers.");
-	    	}
-	    	else
-	    	{
-		    	//Database insert
-		    	Connection connection = Call_Centre_Training.getConnection();
-				Statement st = null;
-				ResultSet rs = null;
-				
-				try
-				{
-					st = connection.createStatement();
-					String joiningSql = "INSERT INTO customer (fName,sName,houseNo,streetName,city,county,postCode,telNo,email,secQues,secAns) VALUES ('" + fNameIn + "','" + sNameIn + "','" + houseNumIn + "','" + streetNameIn + "','" + cityIn + "','" + countyIn + "','" + postcodeIn + "','" + phoneIn + "','" + emailIn + "','" + secQuestionIn + "','" + secAnswerIn + "')";
-					st.executeUpdate(joiningSql);
-					JOptionPane.showMessageDialog(null,"Customer added!");
-
-				}
-				catch(SQLException ex)
-				{
-					ex.printStackTrace();
-				}
-		        
-				fNameTxt.setText("");
-		    	sNameTxt.setText("");
-		    	houseNumTxt.setText("");
-		    	streetNameTxt.setText("");
-		    	cityTxt.setText("");
-		    	countyTxt.setText("");
-		    	postCodeTxt.setText("");
-		    	phoneNumTxt.setText("");
-		    	emailTxt.setText("");
-		    	secAnswerTxt.setText("");
+		    	String phoneIn = phoneNumTxt.getText();
+		    	String emailIn = emailTxt.getText();
+		    	String secQuestionIn = (String)secQuestionCombo.getSelectedItem();
+		    	String secAnswerIn = secAnswerTxt.getText();
+		    	
+		    	boolean testFNameIn = JoiningGUI.numericVal(fNameIn);
+		    	boolean testSNameIn = JoiningGUI.numericVal(sNameIn);
+		    	
+		    	if(("".equals(fNameIn)) || ("".equals(sNameIn))||("".equals(houseNumIn))||("".equals(streetNameIn))||("".equals(cityIn))
+		    		||("".equals(countyIn))||("".equals(postCodeIn))||("".equals(emailIn))||("".equals(secQuestionIn))||("".equals(secAnswerIn)))		    			
+		    	{
+		    		JOptionPane.showMessageDialog(null,"No blank fields allowed!");
+		    	}
+		    	else if(!(testFNameIn == false) || !(testSNameIn == false))
+		    	{
+		    		JOptionPane.showMessageDialog(null,"First and last name can contain only letters.");
+		    	}
+		    	else
+		    	{
+			    	//Database insert
+			    	Connection conn = Call_Centre_Training.getConnection();
+					PreparedStatement stmt = null;
+					ResultSet rs = null;
+					
+					try
+					{
+						stmt = conn.prepareStatement("INSERT INTO customer (fName,sName,houseNo,streetName,city,county,postCode,telNo,email,secQues,secAns) VALUES (?,?,?,?,?,?,?,?,?,?,?)");
+						stmt.setString(1, fNameIn);
+						stmt.setString(2, sNameIn);
+						stmt.setString(3, houseNumIn);
+						stmt.setString(4, streetNameIn);
+						stmt.setString(5, cityIn);
+						stmt.setString(6, countyIn);
+						stmt.setString(7, postCodeIn);
+						stmt.setString(8, phoneIn);
+						stmt.setString(9, emailIn);
+						stmt.setString(10, secQuestionIn);
+						stmt.setString(11, secAnswerIn);
+	
+						stmt.executeUpdate();
+						JOptionPane.showMessageDialog(null,"Customer added!");
+	
+					}
+					catch(SQLException ex)
+					{
+						ex.printStackTrace();
+					}
+			        
+					fNameTxt.setText("");
+			    	sNameTxt.setText("");
+			    	houseNumTxt.setText("");
+			    	streetNameTxt.setText("");
+			    	cityTxt.setText("");
+			    	countyTxt.setText("");
+			    	postCodeTxt.setText("");
+			    	phoneNumTxt.setText("");
+			    	emailTxt.setText("");
+			    	secAnswerTxt.setText("");
+		    	}
 	    	}
     	}
     }
+    
     	
    	class ResetListener implements ActionListener
     {

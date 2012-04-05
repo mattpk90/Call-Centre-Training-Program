@@ -25,7 +25,6 @@ import java.util.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
-
 public class ComplaintGUI
 {
 	//page objects
@@ -45,6 +44,7 @@ public class ComplaintGUI
 	static JTextField custIdTxt;
 	static JComboBox problemTypeCombo;
 	static JButton fetchCustHistButton, newComplButton;
+	static JScrollPane readOnlyScrollPane;
 	
 	static String[] problemTypeString = {"Product faulty", "Engineer missed call out", "Poor service", "Wants to speak to a manager", "Other"};
 	
@@ -72,7 +72,7 @@ public class ComplaintGUI
     	
 		//scroll pane
 		JScrollPane complaintScrollPane;
-		JScrollPane readOnlyScrollPane;
+		
 		
 		//menus
 		JMenu fileMenu = new JMenu("File");
@@ -342,32 +342,35 @@ public class ComplaintGUI
 		public void actionPerformed(ActionEvent ev)
 		{		
 			String custId = custIdTxt.getText();
-			Connection connection = Call_Centre_Training.getConnection();
-			Statement st = null;
+			Connection conn = Call_Centre_Training.getConnection();
+			PreparedStatement stmt = null;
+			PreparedStatement stmt2 = null;
 			ResultSet rs = null;
 			ResultSet rs2 = null;
-			String S = "";
+			String status = "";
 
 			
 			String previousHistory = "";
-			if(("".equals(custId)) )
+			if(("".equals(custId)))
     		{
     			JOptionPane.showMessageDialog(null,"Please enter a customer ID","Validation Warning",JOptionPane.WARNING_MESSAGE);
     		}
     		else
 			try
 			{
-				st = connection.createStatement();
-								
-				rs2 = st.executeQuery("SELECT status FROM customer WHERE cust_id =" + custId + ";");
+				stmt = conn.prepareStatement("SELECT status FROM customer WHERE cust_id =?");
+				stmt.setString(1, custId);			
+				rs2 = stmt.executeQuery();
 				rs2.first();
-				S = rs2.getString("status");
-				if (S.equals("1"))
+				status = rs2.getString("status");
+				if (status.equals("1"))
 				{
 					JOptionPane.showMessageDialog(null,"You are viewing an account that has been closed!");
 					rs2.next();
 				}
-				rs = st.executeQuery("SELECT DATE_FORMAT(dateTime, '%W %D %M %Y %H:%i') AS dateTime, complaint, problemType FROM complaints WHERE cust_id =" + custId + ";");
+				stmt2 = conn.prepareStatement("SELECT DATE_FORMAT( DATETIME,  '%W %D %M %Y %H:%i' ) AS DATETIME, complaint, problemType, dateTime as dt2 FROM complaints WHERE cust_id =? ORDER BY dt2 DESC");
+				stmt2.setString(1, custId);
+				rs = stmt2.executeQuery();
 
 				boolean found = rs.next();
 				
@@ -393,6 +396,7 @@ public class ComplaintGUI
 					fetchCustHistButton.setEnabled(false);
 					newComplButton.setEnabled(true);
 				}
+				readOnlyTextArea.setCaretPosition(0);
 			}
 			catch(SQLException ex)
 			{
@@ -410,21 +414,22 @@ public class ComplaintGUI
 			String problemTypeIn = (String)problemTypeCombo.getSelectedItem();
 			String previousComplaint = readOnlyTextArea.getText();
 			String custId = custIdTxt.getText();
-	    	//System.out.println("Cust ID:" + custId);
-	    	
-	    	
+	    		
 		    	//Database insert
-		    	Connection connection = Call_Centre_Training.getConnection();
-				Statement st = null;
+		    	Connection conn = Call_Centre_Training.getConnection();
+				PreparedStatement stmt = null;
 				ResultSet rs = null;
 				DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm");
 				Date date = new Date();
 				String dateNow = dateFormat.format(date);
 				try
 				{
-					st = connection.createStatement();
-					String complaintSql = "INSERT INTO complaints (cust_id, dateTime, complaint, problemType) VALUES (" + custId + ",'" + dateNow + "','" + complaintIn + "','" + problemTypeIn + "')"; 
-					st.executeUpdate(complaintSql);
+					stmt = conn.prepareStatement("INSERT INTO complaints (cust_id, dateTime, complaint, problemType) VALUES (?,?,?,?)");
+					stmt.setString(1, custId);
+					stmt.setString(2, dateNow);
+					stmt.setString(3, complaintIn);
+					stmt.setString(4, problemTypeIn);
+					stmt.executeUpdate();
 					JOptionPane.showMessageDialog(null,"Complaint added!");
 				}
 				catch(SQLException ex)
@@ -433,16 +438,17 @@ public class ComplaintGUI
 					ex.printStackTrace();
 				}
 				
-			String custId2 = custIdTxt.getText();
-			Connection connection2 = Call_Centre_Training.getConnection();
-			Statement st2 = null;
+			
+			
+			PreparedStatement stmt2 = null;
 			ResultSet rs2 = null;
 			
 			String previousHistory2 = "";
 			try
 			{
-				st2 = connection.createStatement();
-				rs2 = st2.executeQuery("SELECT DATE_FORMAT(dateTime, '%W %D %M %Y %H:%i') AS dateTime, complaint, problemType FROM complaints WHERE cust_id =" + custId2 + ";");
+				stmt2 = conn.prepareStatement("SELECT DATE_FORMAT( DATETIME,  '%W %D %M %Y %H:%i' ) AS DATETIME, complaint, problemType, dateTime as dt2 FROM complaints WHERE cust_id =? ORDER BY dt2 DESC");
+				stmt2.setString(1, custId);
+				rs2 = stmt2.executeQuery();
 
 				boolean found2 = rs2.next();
 				
@@ -465,6 +471,7 @@ public class ComplaintGUI
 					}
 					readOnlyTextArea.setText(previousHistory2);				
 				}
+				readOnlyTextArea.setCaretPosition(0);
 			}
 			catch(SQLException ex)
 			{

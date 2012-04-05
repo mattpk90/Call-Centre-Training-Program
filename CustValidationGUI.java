@@ -328,16 +328,17 @@ public class CustValidationGUI
 				
 				if(matcher.matches())
 				{
-	    			Connection connection = Call_Centre_Training.getConnection();
-					Statement st = null;
+	    			Connection conn = Call_Centre_Training.getConnection();
+					PreparedStatement stmt = null;
 					ResultSet rs = null;
 					
 					try
 					{
-						st = connection.createStatement();
-						String submitSql = "SELECT secQues FROM customer WHERE sName =  '" + sNameTxt.getText() + "' AND houseNo =  '" 
-							+ houseNoTxt.getText() + "' AND postCode = '" + postCodeTxt.getText() + "'"; 
-						rs = st.executeQuery(submitSql);
+						stmt = conn.prepareStatement("SELECT secQues FROM customer WHERE sName=? AND houseNo=? AND postCode=?");
+						stmt.setString(1, sNameTxt.getText());
+						stmt.setString(2, houseNoTxt.getText());
+						stmt.setString(3, postCodeTxt.getText());
+						rs = stmt.executeQuery();
 		
 						boolean found = rs.next();					
 						if (!found)
@@ -378,16 +379,18 @@ public class CustValidationGUI
     	public void actionPerformed(ActionEvent e)
     	{
     			Connection connection = Call_Centre_Training.getConnection();
-				Statement st = null;
+				PreparedStatement stmt = null;
 				ResultSet rs = null;
 				ResultSet rs2 = null;
 				
 				try
 				{
-					st = connection.createStatement();
-					String validateSql = "SELECT * FROM customer WHERE sName =  '" + sNameTxt.getText() + "' AND houseNo =  '" +
-						 houseNoTxt.getText() + "' AND postCode = '" + postCodeTxt.getText() + "' AND secAns ='" + secAnsTxt.getText() + "'"; 
-					rs = st.executeQuery(validateSql);
+					stmt = connection.prepareStatement("SELECT * FROM customer WHERE sName=? AND houseNo=? AND postCode=? AND secAns=?");
+					stmt.setString(1, sNameTxt.getText());
+					stmt.setString(2, houseNoTxt.getText());
+					stmt.setString(3, postCodeTxt.getText());
+					stmt.setString(4, secAnsTxt.getText());
+					rs = stmt.executeQuery();
 	
 					boolean found = rs.next();					
 					if (!found)

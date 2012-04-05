@@ -58,21 +58,36 @@ public class CallLogView
     {
 	    public void actionPerformed(ActionEvent e)
 	    {	     
-			System.out.println(elapsedTime());
-			
+		
 			String commentsIn = commentsTextArea.getText();
 			String callTakerIn = callTakerTextField.getText();
+			String elapsedTime = "TIME_ERROR";
+			try
+			{
+				elapsedTime = String.valueOf(elapsedTime());
+			}catch(NumberFormatException ex)
+			{
+				ex.printStackTrace();
+			}
+			
+			
 			
 	    	//Database insert
-	    	Connection connection = Call_Centre_Training.getConnection();
-			Statement st = null;
+	    	Connection conn = Call_Centre_Training.getConnection();
+			PreparedStatement stmt = null;
 			ResultSet rs = null;
 			
 			try
 			{
-				st = connection.createStatement();
-				String callLogSQL = "INSERT INTO call_log (start_time, end_time, call_length, comments, call_taker) VALUES ('" + startDateString + "','" + endDateString + "','" + elapsedTime() + "','" + commentsIn + "','" + callTakerIn + "')";
-				st.executeUpdate(callLogSQL);
+			
+				stmt = conn.prepareStatement("INSERT INTO call_log (start_time, end_time, call_length, comments, call_taker) VALUES (?,?,?,?,?)");
+				stmt.setString(1, startDateString);
+				stmt.setString(2, endDateString);
+				stmt.setString(3, elapsedTime);
+				stmt.setString(4, commentsIn);
+				stmt.setString(5, callTakerIn);
+				stmt.executeUpdate();
+				
 				JOptionPane.showMessageDialog(null,"Call Logged!"); 
 			}
 			catch(SQLException ex)

@@ -202,8 +202,8 @@ public class ProductDescGUI
 					Connection connection = Call_Centre_Training.getConnection();
 					try
 					{					
-						String selectProducts = "SELECT product_name FROM products WHERE product_type ='" + prodType + "'";
-						PreparedStatement prodTypeStmt = connection.prepareStatement(selectProducts);
+						PreparedStatement prodTypeStmt = connection.prepareStatement("SELECT product_name FROM products WHERE product_type =?");
+						prodTypeStmt.setString(1, prodType);
 						ResultSet prodTypeRsltSet = prodTypeStmt.executeQuery();
 						
 						ArrayList<String> productName = new ArrayList<String>();
@@ -253,8 +253,8 @@ public class ProductDescGUI
 					
 				try
 				{						
-					String selectProdData = "SELECT * FROM products WHERE product_name = '" + prodName + "'";
-					PreparedStatement prodNameStmt = connection.prepareStatement(selectProdData);
+					PreparedStatement prodNameStmt = connection.prepareStatement("SELECT * FROM products WHERE product_name =?");
+					prodNameStmt.setString(1, prodName);
 					ResultSet prodNameRsltSet = prodNameStmt.executeQuery();
 											
 					while (prodNameRsltSet.next()) 

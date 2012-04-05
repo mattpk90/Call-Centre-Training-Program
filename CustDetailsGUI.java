@@ -24,7 +24,8 @@ import java.io.IOException;
 import java.util.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class CustDetailsGUI
 {		
@@ -510,19 +511,21 @@ public class CustDetailsGUI
 			if (result == JOptionPane.YES_OPTION)
 			{
 				String custId = custIdTxt.getText();	
-				Connection connection = Call_Centre_Training.getConnection();
-				Statement st = null;
+				Connection conn = Call_Centre_Training.getConnection();
+				PreparedStatement stmt = null;
+				PreparedStatement stmt2 = null;
 				ResultSet rs = null;
 				DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm");
 				Date date = new Date();
 				String dateNow = dateFormat.format(date);	
 				try
 				{
-					String str = JOptionPane.showInputDialog(null, "Please enter a reason for account closure: ", "Closing Account", 1);
-					if(str != null){
-						st = connection.createStatement();
-						String closingSql = "UPDATE customer SET status=1 WHERE cust_id=" + custId + ";";	
-						st.executeUpdate(closingSql);
+					String reason = JOptionPane.showInputDialog(null, "Please enter a reason for account closure: ", "Closing Account", 1);
+					if(reason != null){
+						reason = "No reason entered.";
+						stmt = conn.prepareStatement("UPDATE customer SET status=1 WHERE cust_id=?");
+						stmt.setString(1, custId);
+						stmt.executeUpdate();
 						custIdTxt.setEnabled(true);	
 						fetchCustDetailsButton.setEnabled(true);
 						custIdTxt.setText("");
@@ -539,15 +542,16 @@ public class CustDetailsGUI
 				    	closeAccountButton.setEnabled(false);
 						openAccountButton.setEnabled(false);
 						updateDetailsButton.setEnabled(false);
-					 
-						String closeSql = "INSERT INTO closed (customer_id, date, reason ) VALUES (" + custId + ",'" + dateNow + "','" + str + "')"; 
-						st.executeUpdate(closeSql);
+					 	stmt2 = conn.prepareStatement("INSERT INTO closed (customer_id, date, reason ) VALUES (?,?,?)");
+					    stmt2.setString(1, custId);
+					    stmt2.setString(2, dateNow);
+					    stmt2.setString(3, reason);
+						stmt2.executeUpdate();
 						JOptionPane.showMessageDialog(null,"Customer Closed!");
+					}else
+					{
+						JOptionPane.showMessageDialog(null, "You pressed the cancel button, therefore not closing account.", "Closing Account", 1);
 					}						
-				  	else
-				  	{						  
-						JOptionPane.showMessageDialog(null, "You pressed cancel button.", "Closing Account", 1);
-					}
 				}
 				catch(SQLException ex)
 				{
@@ -556,7 +560,7 @@ public class CustDetailsGUI
 	       	}
 	      	else if (result == JOptionPane.NO_OPTION)
 	      	{
-      	   		System.out.println("Closing account cancelled");
+      	   		JOptionPane.showMessageDialog(null, "You pressed the cancel button, therefore not closing account.", "Closing Account", 1);
     		}       
     	}	
     }
@@ -569,16 +573,16 @@ public class CustDetailsGUI
     		if (result == JOptionPane.YES_OPTION)
     		{
 				String custId = custIdTxt.getText();	
-				Connection connection = Call_Centre_Training.getConnection();
-				Statement st = null;
+				Connection conn = Call_Centre_Training.getConnection();
+				PreparedStatement stmt = null;
 				ResultSet rs = null;
 								
 				try
 				{
-					st = connection.createStatement();
-					String closingSql = "UPDATE customer SET status=0 WHERE cust_id=" + custId + ";";
+					stmt = conn.prepareStatement("UPDATE customer SET status=0 WHERE cust_id=?");
+					stmt.setString(1, custId);
+					stmt.executeUpdate();
 					
-					st.executeUpdate(closingSql);
 					JOptionPane.showMessageDialog(null,"Customer Re-opened!");
 					custIdTxt.setEnabled(true);	
 					fetchCustDetailsButton.setEnabled(true);
@@ -614,6 +618,10 @@ public class CustDetailsGUI
     {
     	public void actionPerformed(ActionEvent e)
     	{
+    		Pattern telephonePattern = Pattern.compile("\\+[0-9]{0,14}$");
+    		Matcher phoneMatcher = telephonePattern.matcher(phoneNumTxt.getText());
+    		
+    		
     	    int result = JOptionPane.showConfirmDialog(null,"Are you sure you want to update customer details?","Account update",JOptionPane.YES_NO_OPTION);
     	    if (result == JOptionPane.YES_OPTION) 
     	   	{
@@ -624,34 +632,50 @@ public class CustDetailsGUI
 				String streetNameIn = streetNameTxt.getText();
 				String cityIn = cityTxt.getText();
 				String countyIn = countyTxt.getText();
-				String postcodeIn = postCodeTxt.getText();
-				String phoneIn = phoneNumTxt.getText();
-				String emailIn = emailTxt.getText();
-				String secQuestionIn = (String)secQuestionCombo.getSelectedItem();
-				String secAnswerIn = secAnswerTxt.getText();
-				Connection connection = Call_Centre_Training.getConnection();
-				Statement st = null;
-				ResultSet rs = null;
-				try
-				{
-					st = connection.createStatement();
-					String closingSql = "UPDATE customer SET fName='" + fNameIn + "', sName='" + sNameIn + "', houseNo='" + houseNumIn 
-						+ "', streetName='" + streetNameIn + "', city='" + cityIn + "', county='" + countyIn + "', postCode='" + postcodeIn 
-							+ "', telNo='" + phoneIn + "', email='" + emailIn + "', secQues='" + secQuestionIn + "', SecAns='" + secAnswerIn + "'  WHERE cust_id=" + custId + ";";
-					
-					st.executeUpdate(closingSql);
-					JOptionPane.showMessageDialog(null,"Customer details updated!");
-				}
-				catch(SQLException ex)
-				{
-				ex.printStackTrace();
-				}			  	
-    	    }
-     	    else if (result == JOptionPane.NO_OPTION)
-     	    {
-          		System.out.println("Update cancelled");
-       		}   	     
-    	} 	
+				String postCodeIn = postCodeTxt.getText();
+					if(!phoneMatcher.matches())
+			    	{
+			    		JOptionPane.showMessageDialog(null,"Phone number can contain only numbers.");
+			    	}else
+				    	{
+						String phoneIn = phoneNumTxt.getText();
+						String emailIn = emailTxt.getText();
+						String secQuestionIn = (String)secQuestionCombo.getSelectedItem();
+						String secAnswerIn = secAnswerTxt.getText();
+						
+						Connection conn = Call_Centre_Training.getConnection();
+						PreparedStatement stmt = null;
+						ResultSet rs = null;
+						try
+						{
+							stmt = conn.prepareStatement("UPDATE customer SET fName=?, sName=?, houseNo=?, streetName=?, city=?, county=?, postCode=?, telNo=?, email=?, secQues=?, SecAns=?  WHERE cust_id=?");
+							stmt.setString(1, fNameIn);
+							stmt.setString(2, sNameIn);
+							stmt.setString(3, houseNumIn);
+							stmt.setString(4, streetNameIn);
+							stmt.setString(5, cityIn);
+							stmt.setString(6, countyIn);
+							stmt.setString(7, postCodeIn);
+							stmt.setString(8, phoneIn);
+							stmt.setString(9, emailIn);
+							stmt.setString(10, secQuestionIn);
+							stmt.setString(11, secAnswerIn);
+							stmt.setString(12, custId);
+							stmt.executeUpdate();
+							JOptionPane.showMessageDialog(null,"Customer details updated!");
+						}
+						catch(SQLException ex)
+						{
+						ex.printStackTrace();
+						}			  	
+		    	    }
+    	   		}
+	     	    else if (result == JOptionPane.NO_OPTION)
+	     	    {
+	          		System.out.println("Update cancelled.");
+	       		}   	     
+	    	}
+    	 	
     }
     
      class FetchCustListener implements ActionListener
@@ -660,13 +684,13 @@ public class CustDetailsGUI
 		{			
 			String custId = custIdTxt.getText();
 			String secQues = ""; 
-			Connection connection = Call_Centre_Training.getConnection();
-			Statement st = null;
+			Connection conn = Call_Centre_Training.getConnection();
+			PreparedStatement stmt = null;
 			ResultSet rs = null;
-			String Q1 = "Mothers Maiden Name?";
+			String Q1 = "Mother's Maiden Name?";
 			String Q2 = "Favourite actor?";
-			String S = "";
-			if(("".equals(custId)) )
+			String status = "";
+			if(("".equals(custId)))
     		{
     			JOptionPane.showMessageDialog(null,"Please enter a customer ID","Validation Warning",JOptionPane.WARNING_MESSAGE);
     		}
@@ -674,8 +698,9 @@ public class CustDetailsGUI
     		{		
 				try
 				{
-					st = connection.createStatement();
-					rs = st.executeQuery("SELECT fName,sName,houseNo,streetName,city,county,postCode,telNo,email,secQues,secAns,status FROM customer WHERE cust_id =" + custId + ";");
+					stmt = conn.prepareStatement("SELECT fName,sName,houseNo,streetName,city,county,postCode,telNo,email,secQues,secAns,status FROM customer WHERE cust_id =?");
+					stmt.setString(1, custId);
+					rs = stmt.executeQuery();
 					
 					boolean found = rs.next();				
 					if (!found)
@@ -716,11 +741,11 @@ public class CustDetailsGUI
 								secQuestionCombo.setSelectedIndex(0);	
 							}		
 							secAnswerTxt.setText(rs.getString("secAns"));
-							S = rs.getString("status");
+							status = rs.getString("status");
 							closeAccountButton.setEnabled(true);
 							openAccountButton.setEnabled(true);
 							updateDetailsButton.setEnabled(true);
-							if (S.equals("1"))
+							if (status.equals("1"))
 							{
 								closeAccountButton.setVisible(false);
 								openAccountButton.setVisible(true);

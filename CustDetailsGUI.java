@@ -618,7 +618,7 @@ public class CustDetailsGUI
     {
     	public void actionPerformed(ActionEvent e)
     	{
-    		Pattern telephonePattern = Pattern.compile("\\+[0-9]{0,14}$");
+    		Pattern telephonePattern = Pattern.compile("\\Q+\\E[0-9]{0,14}$|[0-9]{0,14}$");
     		Matcher phoneMatcher = telephonePattern.matcher(phoneNumTxt.getText());
     		
     		

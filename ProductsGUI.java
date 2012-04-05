@@ -24,6 +24,8 @@ import java.io.IOException;
 import java.util.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ProductsGUI
 {
@@ -538,102 +540,123 @@ public class ProductsGUI
     {
 		public void actionPerformed(ActionEvent e)
 		{
-			String custId = custIdTxt.getText();
-			Connection connection = Call_Centre_Training.getConnection();
-			Statement st = null;
-			Statement st2 = null;
-			Statement st3 = null;
-			ResultSet rs = null;
-			ResultSet rs2 = null;
-			ResultSet rs3 = null;
-			String S = "";
-		
-			String previousHistory = "";
-			if(("".equals(custId)) )
+			String custId;
+			Pattern pattern = Pattern.compile("^[0-9]");
+			Matcher matcher = pattern.matcher(custIdTxt.getText());
+			if(!matcher.matches())
 			{
-				JOptionPane.showMessageDialog(null,"Please enter a customer ID","Validation Warning",JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(null,"Incorrect customer ID format, must be number(s).","Validation Warning",JOptionPane.WARNING_MESSAGE);
+				custIdTxt.setText("");
 			}
 			else
-			try
 			{
-				st = connection.createStatement();
+				custId = custIdTxt.getText();
 				
-				rs3 = st.executeQuery("SELECT status FROM customer WHERE cust_id =" + custId + ";");
-				rs3.first();
-				S = rs3.getString("status");
-				if (S.equals("1"))
+				
+				Connection conn = Call_Centre_Training.getConnection();
+				PreparedStatement stmt = null;
+				PreparedStatement stmt2 = null;
+				PreparedStatement stmt3 = null;
+				ResultSet rs = null;
+				ResultSet rs2 = null;
+				ResultSet rs3 = null;
+				String status = "";
+				
+				
+				
+				String previousHistory = "";
+				if(("".equals(custId)) )
 				{
-					JOptionPane.showMessageDialog(null,"You are viewing an account that has been closed!");
-					rs3.next();
-				}
-					
-				rs = st.executeQuery("SELECT cust_id,fName,sName,houseNo,streetName,city,county,postCode,telNo,email FROM customer WHERE cust_id =" + custId + ";");					
-				boolean found = rs.next();		
-				if (!found)
-				{
-					JOptionPane.showMessageDialog(null,"No customer found!");
-				}
-				else
-				{
-					int recordCount = 0;
-					while(rs.next())
-					{
-						recordCount++;
-					}
-					rs.first();
-					for(int i = 0;i < (recordCount +1); i++)
-					{
-						fNameTxt.setText(rs.getString("fName"));
-						sNameTxt.setText(rs.getString("sName"));
-						houseNumTxt.setText(rs.getString("houseNo"));
-						streetNameTxt.setText(rs.getString("streetName"));
-						cityTxt.setText(rs.getString("City"));
-						countyTxt.setText(rs.getString("county"));
-						postCodeTxt.setText(rs.getString("postCode"));
-						phoneNumTxt.setText(rs.getString("telNo"));
-						emailTxt.setText(rs.getString("email"));	
-						custIdTxt.setEnabled(false);		
-						newComplButton.setEnabled(true);	
-						discussTextArea.setEnabled(true);
-					}
-					
-				}
-			}
-			catch(SQLException ex)
-			{		
-				JOptionPane.showMessageDialog(null,"Cannot find customer with that ID","Validation Warning",JOptionPane.WARNING_MESSAGE);
-			}
-			
-			try
-			{
-				st2 = connection.createStatement();
-				rs2 = st2.executeQuery("SELECT DATE_FORMAT(dateTime, '%W %D %M %Y %H:%i') AS dateTime,discussion FROM discussion WHERE cust_id =" + custId + ";");
-										
-				boolean found2 = rs2.next();				
-				if (!found2)
-				{
-					readOnlyTextArea.setText("No Previous history");
+					JOptionPane.showMessageDialog(null,"Please enter a customer ID","Validation Warning",JOptionPane.WARNING_MESSAGE);
 				}
 				else
 				{
-					int recordCount2 = 0;
-					while(rs2.next())
+					
+					try
 					{
-						recordCount2++;
+						stmt = conn.prepareStatement("SELECT status FROM customer WHERE cust_id =?");
+						stmt.setString(1, custId);
+						rs3 = stmt.executeQuery();
+						rs3.first();
+						status = rs3.getString("status");
+						if (status.equals("1"))
+						{
+							JOptionPane.showMessageDialog(null,"You are viewing an account that has been closed!");
+							rs3.next();
+						}
+						stmt2 = conn.prepareStatement("SELECT cust_id,fName,sName,houseNo,streetName,city,county,postCode,telNo,email FROM customer WHERE cust_id =?");
+						stmt2.setString(1, custId);
+						rs = stmt2.executeQuery();					
+						boolean found = rs.next();		
+						if (!found)
+						{
+							JOptionPane.showMessageDialog(null,"No customer found!");
+						}
+						else
+						{
+							int recordCount = 0;
+							while(rs.next())
+							{
+								recordCount++;
+							}
+							rs.first();
+							for(int i = 0;i < (recordCount +1); i++)
+							{
+								fNameTxt.setText(rs.getString("fName"));
+								sNameTxt.setText(rs.getString("sName"));
+								houseNumTxt.setText(rs.getString("houseNo"));
+								streetNameTxt.setText(rs.getString("streetName"));
+								cityTxt.setText(rs.getString("City"));
+								countyTxt.setText(rs.getString("county"));
+								postCodeTxt.setText(rs.getString("postCode"));
+								phoneNumTxt.setText(rs.getString("telNo"));
+								emailTxt.setText(rs.getString("email"));	
+								custIdTxt.setEnabled(false);		
+								newComplButton.setEnabled(true);	
+								discussTextArea.setEnabled(true);
+							}
+							
+						}
 					}
-					rs2.first();
-					for(int i = 0;i < (recordCount2 +1); i++)
+					catch(SQLException ex)
+					{		
+						JOptionPane.showMessageDialog(null,"Cannot find customer with that ID","Validation Warning",JOptionPane.WARNING_MESSAGE);
+					}
+				}
+				try
+				{
+					stmt3 = conn.prepareStatement("SELECT DATE_FORMAT(dateTime, '%W %D %M %Y %H:%i') AS dateTime,discussion, dateTime as dt2 FROM discussion WHERE cust_id =? ORDER BY dt2 DESC");
+					stmt3.setString(1, custId);
+					rs2 = stmt3.executeQuery();
+											
+					boolean found2 = rs2.next();				
+					if (!found2)
 					{
-						previousHistory += rs2.getString(1) + "\n" + rs2.getString(2) + "\n\n";
-						rs2.next();
+						readOnlyTextArea.setText("No Previous history");
 					}
-					readOnlyTextArea.setText(previousHistory);					
+					else
+					{
+						int recordCount2 = 0;
+						while(rs2.next())
+						{
+							recordCount2++;
+						}
+						rs2.first();
+						for(int i = 0;i < (recordCount2 +1); i++)
+						{
+							previousHistory += rs2.getString(1) + "\n" + rs2.getString(2) + "\n\n";
+							rs2.next();
+						}
+						readOnlyTextArea.setText(previousHistory);
+						readOnlyTextArea.setCaretPosition(0);
+					}
+				}
+				catch(SQLException ex)
+				{			
+					ex.printStackTrace();
 				}
 			}
-			catch(SQLException ex)
-			{			
-				ex.printStackTrace();
-			}
+	
 		
 		}  		
     }
@@ -685,19 +708,21 @@ public class ProductsGUI
 			String discussionIn = discussTextArea.getText();
 			String previousDiscussion = readOnlyTextArea.getText();
 			String custId = custIdTxt.getText();
-	    	  	
+	    	String previousHistory = "";
 	    	//Database insert
-	    	Connection connection = Call_Centre_Training.getConnection();
-			Statement st = null;
+	    	Connection conn = Call_Centre_Training.getConnection();
+			PreparedStatement stmt = null;
 			ResultSet rs = null;
 			DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm");
 			Date date = new Date();
 			String dateNow = dateFormat.format(date);
 			try
 			{
-				st = connection.createStatement();
-				String discussionSql = "INSERT INTO discussion (cust_id, dateTime, discussion) VALUES (" + custId + ",'" + dateNow + "','" + discussionIn + "')"; 
-				st.executeUpdate(discussionSql);
+				stmt = conn.prepareStatement("INSERT INTO discussion (cust_id, dateTime, discussion) VALUES (?,?,?)");
+				stmt.setString(1,custId);
+				stmt.setString(2,dateNow);
+				stmt.setString(3,discussionIn);
+				stmt.executeUpdate();
 				JOptionPane.showMessageDialog(null,"Discussion added!");
 			}
 			catch(SQLException ex)
@@ -705,6 +730,42 @@ public class ProductsGUI
 				readOnlyTextArea.setText("Please Enter Customer ID.");
 				ex.printStackTrace();
 			}
+			PreparedStatement stmt2 = null;
+			ResultSet rs2 = null;
+			try
+			{
+				stmt2 = conn.prepareStatement("SELECT DATE_FORMAT(dateTime, '%W %D %M %Y %H:%i') AS dateTime,discussion, dateTime as dt2 FROM discussion WHERE cust_id =? ORDER BY dt2 DESC");
+				stmt2.setString(1, custId);
+				rs2 = stmt2.executeQuery();
+										
+				boolean found2 = rs2.next();				
+				if (!found2)
+				{
+					readOnlyTextArea.setText("No Previous history");
+				}
+				else
+				{
+					int recordCount2 = 0;
+					while(rs2.next())
+					{
+						recordCount2++;
+					}
+					rs2.first();
+					for(int i = 0;i < (recordCount2 +1); i++)
+					{
+						previousHistory += rs2.getString(1) + "\n" + rs2.getString(2) + "\n\n";
+						rs2.next();
+					}
+					readOnlyTextArea.setText(previousHistory);					
+				}
+			}
+			catch(SQLException ex)
+			{			
+				ex.printStackTrace();
+			}
+			readOnlyTextArea.setText(previousHistory);
+			readOnlyTextArea.setCaretPosition(0);
+			
 		}    		
 	}
 	    	

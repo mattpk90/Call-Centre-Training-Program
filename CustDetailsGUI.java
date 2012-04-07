@@ -548,6 +548,7 @@ public class CustDetailsGUI
 					    stmt2.setString(3, reason);
 						stmt2.executeUpdate();
 						JOptionPane.showMessageDialog(null,"Customer Closed!");
+						conn.close();
 					}else
 					{
 						JOptionPane.showMessageDialog(null, "You pressed the cancel button, therefore not closing account.", "Closing Account", 1);
@@ -600,6 +601,7 @@ public class CustDetailsGUI
 			    	closeAccountButton.setEnabled(false);
 					openAccountButton.setEnabled(false);
 					updateDetailsButton.setEnabled(false);
+					conn.close();
 		
 				}
 				catch(SQLException ex)
@@ -663,6 +665,7 @@ public class CustDetailsGUI
 							stmt.setString(12, custId);
 							stmt.executeUpdate();
 							JOptionPane.showMessageDialog(null,"Customer details updated!");
+							conn.close();
 						}
 						catch(SQLException ex)
 						{
@@ -759,7 +762,8 @@ public class CustDetailsGUI
 						}
 						custIdTxt.setEnabled(false);	
 						fetchCustDetailsButton.setEnabled(false);
-					}				
+					}		
+					conn.close();		
 				}
 				catch(SQLException ex)
 				{				

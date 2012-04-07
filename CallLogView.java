@@ -87,6 +87,7 @@ public class CallLogView
 				stmt.setString(4, commentsIn);
 				stmt.setString(5, callTakerIn);
 				stmt.executeUpdate();
+				conn.close();
 				
 				JOptionPane.showMessageDialog(null,"Call Logged!"); 
 			}

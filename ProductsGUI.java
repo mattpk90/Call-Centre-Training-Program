@@ -617,6 +617,7 @@ public class ProductsGUI
 							}
 							
 						}
+						conn.close();
 					}
 					catch(SQLException ex)
 					{		
@@ -650,6 +651,7 @@ public class ProductsGUI
 						readOnlyTextArea.setText(previousHistory);
 						readOnlyTextArea.setCaretPosition(0);
 					}
+					conn.close();
 				}
 				catch(SQLException ex)
 				{			
@@ -724,6 +726,7 @@ public class ProductsGUI
 				stmt.setString(3,discussionIn);
 				stmt.executeUpdate();
 				JOptionPane.showMessageDialog(null,"Discussion added!");
+				conn.close();
 			}
 			catch(SQLException ex)
 			{
@@ -758,6 +761,7 @@ public class ProductsGUI
 					}
 					readOnlyTextArea.setText(previousHistory);					
 				}
+				conn.close();
 			}
 			catch(SQLException ex)
 			{			

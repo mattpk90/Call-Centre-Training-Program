@@ -199,10 +199,10 @@ public class ProductDescGUI
 				}
 				else 
 				{
-					Connection connection = Call_Centre_Training.getConnection();
+					Connection conn = Call_Centre_Training.getConnection();
 					try
 					{					
-						PreparedStatement prodTypeStmt = connection.prepareStatement("SELECT product_name FROM products WHERE product_type =?");
+						PreparedStatement prodTypeStmt = conn.prepareStatement("SELECT product_name FROM products WHERE product_type =?");
 						prodTypeStmt.setString(1, prodType);
 						ResultSet prodTypeRsltSet = prodTypeStmt.executeQuery();
 						
@@ -222,7 +222,7 @@ public class ProductDescGUI
 						
 						prodTypeNextCombo.setEnabled(true);
 			
-				   		connection.close();	   		
+				   		conn.close();	   		
 					}
 					catch(SQLException ex)
 					{
@@ -249,11 +249,11 @@ public class ProductDescGUI
 				String fileLocation = null;
 				//Item that has just been selected
 				String prodName = (String)prodTypeNextCombo.getSelectedItem();
-				Connection connection = Call_Centre_Training.getConnection();
+				Connection conn = Call_Centre_Training.getConnection();
 					
 				try
 				{						
-					PreparedStatement prodNameStmt = connection.prepareStatement("SELECT * FROM products WHERE product_name =?");
+					PreparedStatement prodNameStmt = conn.prepareStatement("SELECT * FROM products WHERE product_name =?");
 					prodNameStmt.setString(1, prodName);
 					ResultSet prodNameRsltSet = prodNameStmt.executeQuery();
 											
@@ -277,7 +277,7 @@ public class ProductDescGUI
 					
 					ImageIcon image = new ImageIcon(currentFileLocation);
 					prodPicLbl.setIcon(image);
-					connection.close();		   		
+					conn.close();		   		
 				}
 				catch(SQLException ex)
 				{

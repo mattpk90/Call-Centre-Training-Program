@@ -360,6 +360,7 @@ public class CustValidationGUI
 							secAnsTxt.setEnabled(true);
 							validateBtn.setEnabled(true);							
 						}
+						conn.close();
 					}
 					catch(SQLException ex)
 					{
@@ -378,14 +379,14 @@ public class CustValidationGUI
     {
     	public void actionPerformed(ActionEvent e)
     	{
-    			Connection connection = Call_Centre_Training.getConnection();
+    			Connection conn = Call_Centre_Training.getConnection();
 				PreparedStatement stmt = null;
 				ResultSet rs = null;
 				ResultSet rs2 = null;
 				
 				try
 				{
-					stmt = connection.prepareStatement("SELECT * FROM customer WHERE sName=? AND houseNo=? AND postCode=? AND secAns=?");
+					stmt = conn.prepareStatement("SELECT * FROM customer WHERE sName=? AND houseNo=? AND postCode=? AND secAns=?");
 					stmt.setString(1, sNameTxt.getText());
 					stmt.setString(2, houseNoTxt.getText());
 					stmt.setString(3, postCodeTxt.getText());
@@ -416,6 +417,7 @@ public class CustValidationGUI
 						secAnsTxt.setEnabled(false);
 						validateBtn.setEnabled(false);			
 					}
+					conn.close();
 				}
 				catch(SQLException ex)
 				{

@@ -397,6 +397,7 @@ public class ComplaintGUI
 					newComplButton.setEnabled(true);
 				}
 				readOnlyTextArea.setCaretPosition(0);
+				conn.close();
 			}
 			catch(SQLException ex)
 			{
@@ -431,6 +432,7 @@ public class ComplaintGUI
 					stmt.setString(4, problemTypeIn);
 					stmt.executeUpdate();
 					JOptionPane.showMessageDialog(null,"Complaint added!");
+					conn.close();
 				}
 				catch(SQLException ex)
 				{
@@ -472,6 +474,7 @@ public class ComplaintGUI
 					readOnlyTextArea.setText(previousHistory2);				
 				}
 				readOnlyTextArea.setCaretPosition(0);
+				conn.close();
 			}
 			catch(SQLException ex)
 			{

@@ -544,7 +544,7 @@ public class JoiningGUI
 	
 						stmt.executeUpdate();
 						JOptionPane.showMessageDialog(null,"Customer added!");
-	
+						conn.close();
 					}
 					catch(SQLException ex)
 					{

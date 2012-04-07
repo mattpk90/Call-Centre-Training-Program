@@ -49,6 +49,7 @@ public class Call_Centre_Training
 			{
 				boolean inUniversity = false;
 			}
+			conn.close();
 		}
 		catch(SQLException ex)
 		{

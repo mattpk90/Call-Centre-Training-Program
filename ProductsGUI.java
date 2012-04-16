@@ -79,7 +79,6 @@ public class ProductsGUI
 		//menus
 		JMenu fileMenu = new JMenu("File");
 		JMenu pageNav = new JMenu("Navigation");
-		JMenu fileHelpMenu = new JMenu("Help");
 		
 		//menu items
 		JMenuItem fileClose = new JMenuItem("Close");
@@ -89,10 +88,6 @@ public class ProductsGUI
 		JMenuItem navComplaints = new JMenuItem("Complaints");
 		JMenuItem navJoining = new JMenuItem("Joining");
 		JMenuItem navCustDetails = new JMenuItem("Customer Details");
-		
-		JMenuItem helpFAQ = new JMenuItem("FAQ");
-		JMenuItem helpGuide = new JMenuItem("System guide");
-		JMenuItem helpSearch = new JMenuItem("Search");
 		
 		pane.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
@@ -104,7 +99,6 @@ public class ProductsGUI
 		//pane.setJMenuBar(menuBar);
 		menuBar.add(fileMenu);
 		menuBar.add(pageNav);
-		menuBar.add(fileHelpMenu);
 		
 		//file menu
 		fileMenu.add(fileClose);
@@ -122,12 +116,7 @@ public class ProductsGUI
 		navComplaints.addActionListener(navigationListener);
 		navJoining.addActionListener(navigationListener);
 		navCustDetails.addActionListener(navigationListener);
-		
-		//help menu
-		fileHelpMenu.add(helpFAQ);
-		fileHelpMenu.add(helpGuide);
-		fileHelpMenu.add(helpSearch); 
-		
+	
 		
 		//add menu
 		c.ipady = 15;
@@ -617,7 +606,6 @@ public class ProductsGUI
 							}
 							
 						}
-						conn.close();
 					}
 					catch(SQLException ex)
 					{		
@@ -725,8 +713,8 @@ public class ProductsGUI
 				stmt.setString(2,dateNow);
 				stmt.setString(3,discussionIn);
 				stmt.executeUpdate();
+				discussTextArea.setText("");
 				JOptionPane.showMessageDialog(null,"Discussion added!");
-				conn.close();
 			}
 			catch(SQLException ex)
 			{

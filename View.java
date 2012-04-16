@@ -64,7 +64,6 @@ public class View
 		//menus
 		JMenu fileMenu = new JMenu("File");
 		JMenu pageNav = new JMenu("Navigation");
-		JMenu fileHelpMenu = new JMenu("Help");
 		
 		//menu items
 		JMenuItem fileClose = new JMenuItem("Close");
@@ -75,9 +74,6 @@ public class View
 		JMenuItem navJoining = new JMenuItem("Joining");
 		JMenuItem navCustDetails = new JMenuItem("Customer Details");
 		
-		JMenuItem helpFAQ = new JMenuItem("FAQ");
-		JMenuItem helpGuide = new JMenuItem("System guide");
-		JMenuItem helpSearch = new JMenuItem("Search");
 	
 	    pane.setLayout(new GridBagLayout());
 	    GridBagConstraints c = new GridBagConstraints();
@@ -88,7 +84,6 @@ public class View
 		//pane.setJMenuBar(menuBar);
 		menuBar.add(fileMenu);
 		menuBar.add(pageNav);
-		menuBar.add(fileHelpMenu);
 		
 		//file menu
 		fileMenu.add(fileClose);
@@ -106,11 +101,6 @@ public class View
 		navProducts.addActionListener(navigationListener);
 		navJoining.addActionListener(navigationListener);
 		navCustDetails.addActionListener(navigationListener);
-		
-		//help menu
-		fileHelpMenu.add(helpFAQ);
-		fileHelpMenu.add(helpGuide);
-		fileHelpMenu.add(helpSearch); 
 		
 		
 		//add menu

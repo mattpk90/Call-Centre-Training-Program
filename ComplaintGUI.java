@@ -77,7 +77,7 @@ public class ComplaintGUI
 		//menus
 		JMenu fileMenu = new JMenu("File");
 		JMenu pageNav = new JMenu("Navigation");
-		JMenu fileHelpMenu = new JMenu("Help");
+
 		
 		//menu items
 		JMenuItem fileClose = new JMenuItem("Close");
@@ -88,9 +88,7 @@ public class ComplaintGUI
 		JMenuItem navJoining = new JMenuItem("Joining");
 		JMenuItem navCustDetails = new JMenuItem("Customer Details");
 		
-		JMenuItem helpFAQ = new JMenuItem("FAQ");
-		JMenuItem helpGuide = new JMenuItem("System guide");
-		JMenuItem helpSearch = new JMenuItem("Search");
+
 
 	    pane.setLayout(new GridBagLayout());
 	    GridBagConstraints c = new GridBagConstraints();
@@ -102,7 +100,7 @@ public class ComplaintGUI
 		//pane.setJMenuBar(menuBar);
     	menuBar.add(fileMenu);
     	menuBar.add(pageNav);
-    	menuBar.add(fileHelpMenu);
+
 		
 		//file menu
     	fileMenu.add(fileClose);
@@ -121,10 +119,7 @@ public class ComplaintGUI
     	navJoining.addActionListener(navigationListener);
     	navCustDetails.addActionListener(navigationListener);
     	
-    	//help menu
-    	fileHelpMenu.add(helpFAQ);
-    	fileHelpMenu.add(helpGuide);
-    	fileHelpMenu.add(helpSearch); 
+
     	
     	
     	//add menu
@@ -348,7 +343,8 @@ public class ComplaintGUI
 			ResultSet rs = null;
 			ResultSet rs2 = null;
 			String status = "";
-
+			
+			
 			
 			String previousHistory = "";
 			if(("".equals(custId)))
@@ -377,6 +373,7 @@ public class ComplaintGUI
 				if (!found)
 				{
 					readOnlyTextArea.setText("No Existing Complaint");
+					newComplButton.setEnabled(true);
 				}
 				else
 				{
@@ -432,7 +429,6 @@ public class ComplaintGUI
 					stmt.setString(4, problemTypeIn);
 					stmt.executeUpdate();
 					JOptionPane.showMessageDialog(null,"Complaint added!");
-					conn.close();
 				}
 				catch(SQLException ex)
 				{

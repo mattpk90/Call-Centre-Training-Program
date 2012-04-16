@@ -7,18 +7,14 @@
 */
 
 import javax.swing.*;
-import java.io.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.sql.SQLException;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.sql.PreparedStatement;
 import java.sql.Blob;
-import java.io.IOException;
+import java.sql.*;
+
 
 public class Call_Centre_Training 
 {
@@ -34,58 +30,43 @@ public class Call_Centre_Training
 		//v.createAndShowGUI();
 		String fileLocation = "logo.jpg";
 	    ImageIcon img = new ImageIcon(View.class.getResource("logo.jpg"));
-	    JOptionPane.showMessageDialog(null, "Welcome to the British Gas call centre training program\nPlease wait whilst the program establishes a database connection\n \nPress Ok to continue","British Gas call centre training program",1, img);
-	    
-		Connection conn = DriverManager.getConnection("jdbc:mysql://edward.solent.ac.uk:3306/ssd1?user=iaftab&password=rUg9ne4P");
-		PreparedStatement stmt = null;
-		ResultSet rs = null;
-		try
-		{
-			stmt = conn.prepareStatement("SELECT count(*) FROM customer");
-			
-			rs = stmt.executeQuery();
-			if(rs.next())
-			{
-				inUniversity = true;
-			}else
-			{
-				inUniversity = false;
-			}
-			initDone = true;
-			conn.close();
-		}
-		catch(SQLException ex)
-		{
-			ex.printStackTrace();
-		}
+	    JOptionPane.showMessageDialog(null, "Welcome to the British Gas call centre training program \nPress Ok to continue \n\nDeveloped by Robbie Aftab (Q08264228), Ashley Ellis (Q09047930)\nSteve Glasspool (Q09014438) & Matt Kennedy (Q08049351)  ","British Gas call centre training program",1, img);
+
 		CallLogView c = new CallLogView();
 		c.createAndShowGUI();
-		
-		
     }
     
      //This is the class which is called for every database connection
      public static Connection getConnection() 
      {
 		Connection conn = null;
+		
 		try
 		{
 			Class.forName("com.mysql.jdbc.Driver");
-			if(inUniversity)
-			{
-				conn = DriverManager.getConnection("jdbc:mysql://edward.solent.ac.uk:3306/ssd1?user=iaftab&password=rUg9ne4P");
-			}else
-			{
-				conn = DriverManager.getConnection("jdbc:mysql://instance10055.db.xeround.com:6860/bgTraining?user=bgAdmin&password=superuser");
-			}
+			conn = DriverManager.getConnection("jdbc:mysql://edward.solent.ac.uk:3306/ssd1?user=iaftab&password=rUg9ne4P");
+
 		}
 		catch(SQLException ex)
 		{
+			//This means we aren't in the university network.
 			ex.printStackTrace();
+			inUniversity = false;
 		}
 		catch(ClassNotFoundException ex)
 		{
 			ex.printStackTrace();
+		}
+		
+		if(!inUniversity)
+		{
+			try
+			{
+			conn = DriverManager.getConnection("jdbc:mysql://instance10055.db.xeround.com:6860/bgTraining?user=bgAdmin&password=superuser");
+			}catch(SQLException ex)
+			{
+				ex.printStackTrace();
+			}
 		}
 		return conn;
 	}

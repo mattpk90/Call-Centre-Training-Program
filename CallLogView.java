@@ -247,6 +247,8 @@ public class CallLogView
 	     	commentsTextArea.setEnabled(true);
 	     	logCallButton.setEnabled(true);
 	     	endButton.setEnabled(false);
+	     	v.frame.dispose();
+	     	
 	     }
      }
      

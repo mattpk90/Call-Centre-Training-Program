@@ -83,7 +83,7 @@ public class CustDetailsGUI
 		//menus
 		JMenu fileMenu = new JMenu("File");
 		JMenu pageNav = new JMenu("Navigation");
-		JMenu fileHelpMenu = new JMenu("Help");
+
 		
 		//menu items
 		JMenuItem fileClose = new JMenuItem("Close");
@@ -94,9 +94,6 @@ public class CustDetailsGUI
 		JMenuItem navJoining = new JMenuItem("Joining");
 		JMenuItem navCustVal = new JMenuItem("Customer Validation");
 		
-		JMenuItem helpFAQ = new JMenuItem("FAQ");
-		JMenuItem helpGuide = new JMenuItem("System guide");
-		JMenuItem helpSearch = new JMenuItem("Search");
 
 	    pane.setLayout(new GridBagLayout());
 	    GridBagConstraints c = new GridBagConstraints();
@@ -114,7 +111,6 @@ public class CustDetailsGUI
 		//pane.setJMenuBar(menuBar);
     	menuBar.add(fileMenu);
     	menuBar.add(pageNav);
-    	menuBar.add(fileHelpMenu);
 		
 		//file menu
     	fileMenu.add(fileClose);
@@ -134,10 +130,6 @@ public class CustDetailsGUI
     	navCustVal.addActionListener(navigationListener);
     	navComplaints.addActionListener(navigationListener);
     	
-    	//help menu
-    	fileHelpMenu.add(helpFAQ);
-    	fileHelpMenu.add(helpGuide);
-    	fileHelpMenu.add(helpSearch); 
     	
     	
     	//add menu
@@ -690,8 +682,8 @@ public class CustDetailsGUI
 			Connection conn = Call_Centre_Training.getConnection();
 			PreparedStatement stmt = null;
 			ResultSet rs = null;
-			String Q1 = "Mother's Maiden Name?";
-			String Q2 = "Favourite actor?";
+			String q1 = "Mothers Maiden Name?";
+			String q2 = "Favourite actor?";
 			String status = "";
 			if(("".equals(custId)))
     		{
@@ -730,12 +722,11 @@ public class CustDetailsGUI
 							phoneNumTxt.setText(rs.getString("telNo"));
 							emailTxt.setText(rs.getString("email"));
 							secQues = rs.getString("secQues");
-							
-							if (Q1.equals(secQues))
+							if (q1.equals(secQues))
 							{
 								secQuestionCombo.setSelectedIndex(1);
 							}
-							else if (Q2.equals(secQues))
+							else if (q2.equals(secQues))
 							{
 								secQuestionCombo.setSelectedIndex(2);
 							}

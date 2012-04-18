@@ -29,6 +29,8 @@ import java.text.SimpleDateFormat;
 public class CallLogView
 {
 	static JFrame frame;
+	static JMenuBar menuBar;
+	static JMenuItem fileClose;
 	static long start, now;
 	static Date startDate;
 	static String startDateString;
@@ -40,6 +42,7 @@ public class CallLogView
 	static JScrollPane commentsScrollPane;
 	static JLabel callTakerLbl;
 	static CommentsFocusListener commentsFocusListener;
+	static NavigationListener navigationListener;
 	static CallLogListener callLogListener;
 	static StartCallListener startCallListener;
 	static EndCallListener endCallListener;
@@ -47,6 +50,7 @@ public class CallLogView
 	
 	public CallLogView()
 	{		
+		navigationListener = new NavigationListener();
 		callLogListener = new CallLogListener();
 		startCallListener = new StartCallListener();
 		endCallListener = new EndCallListener();
@@ -97,7 +101,7 @@ public class CallLogView
 			}
 			startButton.setEnabled(true);
 			logCallButton.setEnabled(false);
-			
+	     	fileClose.setEnabled(true);
 			commentsTextArea.setText("Enter comments here");
 			callTakerTextField.setText("");
     	}                   
@@ -111,11 +115,32 @@ public class CallLogView
 	    pane.setLayout(new GridBagLayout());
 	    GridBagConstraints c = new GridBagConstraints();
 	    
+	    JMenu fileMenu = new JMenu("File");
+	    
+	    fileClose = new JMenuItem("Close");
+	    fileClose.setEnabled(false);
+	    menuBar = new JMenuBar();
+	    
+	    pane.add(menuBar);
+	    menuBar.add(fileMenu);
+	    fileMenu.add(fileClose);
+	    
+	    fileClose.addActionListener(navigationListener);
+	    
+	    c.ipady = 15;
+	    c.weightx = 0.5;
+    	c.gridx = 0;
+		c.gridy = 0;
+		c.gridwidth = 0;
+		c.gridheight = 1;
+		c.fill = GridBagConstraints.HORIZONTAL;
+    	pane.add(menuBar, c);
+	    
     	startButton = new JButton("Start call");
     	c.ipady = 20;
 		c.weightx = 0.5;
 		c.gridx = 0;
-		c.gridy = 0;
+		c.gridy = 1;
 		c.gridwidth = 1;
 		c.gridheight = 1;
 		c.insets = new Insets(0,0,0,0);
@@ -127,7 +152,7 @@ public class CallLogView
 		c.ipady = 20;
 		c.weightx = 0.5;
 		c.gridx = 1;
-		c.gridy = 0;
+		c.gridy = 1;
 		c.gridwidth = 1;
 		c.gridheight = 1;
 		c.insets = new Insets(0,0,0,0);
@@ -150,7 +175,7 @@ public class CallLogView
 		//c.ipady = 200;
 		//c.ipadx = 200;
 		c.gridx = 0;
-		c.gridy = 1;
+		c.gridy = 2;
 		c.gridwidth = 2;
 		c.gridheight = 1;
 		c.insets = new Insets(20,0,10,0);
@@ -161,7 +186,7 @@ public class CallLogView
 		c.ipady = 20;
 		c.weightx = 1;
 		c.gridx = 0;
-		c.gridy = 3;
+		c.gridy = 4;
 		c.gridwidth = 1;
 		c.gridheight = 1;
 		c.fill = GridBagConstraints.HORIZONTAL;
@@ -172,7 +197,7 @@ public class CallLogView
 		c.ipady = 20;
 		c.weightx = 1;
 		c.gridx = 1;
-		c.gridy = 3;
+		c.gridy = 4;
 		c.gridwidth = 1;
 		c.gridheight = 1;
 		c.fill = GridBagConstraints.HORIZONTAL;
@@ -184,7 +209,7 @@ public class CallLogView
 		c.ipady = 20;
 		c.weightx = 1.0;
 		c.gridx = 0;
-		c.gridy = 4;
+		c.gridy = 5;
 		c.gridwidth = 2;
 		c.gridheight = 1;
 		c.fill = GridBagConstraints.HORIZONTAL;
@@ -248,10 +273,19 @@ public class CallLogView
 	     	logCallButton.setEnabled(true);
 	     	endButton.setEnabled(false);
 	     	v.frame.dispose();
+
 	     	
 	     }
      }
-     
+     class NavigationListener implements ActionListener
+     {
+ 		public void actionPerformed(ActionEvent e)
+ 		{
+ 			if (e.getActionCommand().equals("Close")) {
+ 			    System.exit(0);
+ 			}
+ 		}
+ 	}
     public void startTimer()
     {   
    		start = System.currentTimeMillis();
